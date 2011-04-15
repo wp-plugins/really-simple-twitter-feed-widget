@@ -12,7 +12,7 @@ Shows the latest tweets from a Twitter account in a sidebar widget.
 This plugin displays the latest posts from a Twitter account in a sidebar widget. 
 Easy customization of number of posts shown and replies detection.
 
-For more informations: http://www.whiletrue.it/en/projects/wordpress/22-really-simple-facebook-twitter-share-buttons-per-wordpress.html
+For more informations: http://www.whiletrue.it/en/projects/wordpress/25-really-simple-twitter-feed-widget-per-wordpress.html
 
 == Installation ==
 1. Upload the `really-simple-twitter-widget` directory into the `/wp-content/plugins/` directory
