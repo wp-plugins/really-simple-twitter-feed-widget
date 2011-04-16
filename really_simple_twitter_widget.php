@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.0.0
+Version: 1.0.1
 Author URI: http://www.whiletrue.it/
 */
 
@@ -130,14 +130,14 @@ function really_simple_twitter_messages($options) {
 // WIDGET FUNCTION
 function really_simple_widget_twitter_init() {
 
-	if ( !function_exists('register_sidebar_widget') )
+	if ( !function_exists('register_sidebar_widget') ) {
 		return;
-	
+	}
 	$check_options = get_option('really_simple_twitter_widget');
-  if ($check_options['number']=='') {
-    $check_options['number'] = 1;
-    update_option('really_simple_twitter_widget', $check_options);
-  }
+	if (!is_numeric($check_options['number']) or $check_options['number'] < 1) {
+		$check_options['number'] = 1;
+		update_option('really_simple_twitter_widget', $check_options);
+	}
   
 	function really_simple_widget_twitter($args, $number = 1) {
 
@@ -149,7 +149,6 @@ function really_simple_widget_twitter_init() {
 		extract($args);
 
 		// Each widget can store its own options. We keep strings here.
-		include_once(ABSPATH . WPINC . '/rss.php');
 		$options = get_option('really_simple_twitter_widget');
 		
 		// fill options with default values if value is not set

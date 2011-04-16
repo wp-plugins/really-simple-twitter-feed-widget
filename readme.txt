@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -31,8 +31,14 @@ Yes they're shown in real time, although you have to refresh the page for them t
 This plugin is based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which is based on Pownce for Wordpress widget.
 
 
+== Screenshots ==
+1. Sample content, using default options (e.g. no active links)  
+2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.0.1 =
+Changed: Some more code cleaning and security option control
 
 = 1.0.0 =
 Added: Option to skip tweets containing certain text
