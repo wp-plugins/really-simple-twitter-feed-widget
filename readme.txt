@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
-Tested up to: 3.1
-Stable tag: 1.0.1
+Tested up to: 3.1.1
+Stable tag: 1.0.2
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -37,6 +37,9 @@ This plugin is based on previous work of Max Steel (Web Design Company, Pro Web 
 
 == Changelog ==
 
+= 1.0.2 =
+Changed: Feed cache lifetime shortening to 30 minutes (default is 12 hours)
+
 = 1.0.1 =
 Changed: Some more code cleaning and security option control
 
@@ -54,5 +57,4 @@ Initial release
 
 == Upcoming features ==
 
-* Widget API adoption
-* Multiple Widgets
+* Widget API adoption (carries multiple Widgets support)

@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://www.whiletrue.it/
 */
 
@@ -40,7 +40,11 @@ function really_simple_twitter_messages($options) {
 		return '<ul class="twitter"><li>'.$text.'</li></ul>';
 	} 
 	
+	// MODIFY FEED CACHE LIFETIME ONLY FOR THIS FEED (30 minutes)
+	add_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 	$rss = fetch_feed('http://twitter.com/statuses/user_timeline/'.$options['username'].'.rss');
+	// RESET STANDARD FEED CACHE LIFETIME (12 hours)
+	remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 
 	if (is_wp_error($rss)) {
 		$text = __('WP Error: Feed not created correctly','really_simple_twitter_widget');
