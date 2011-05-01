@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.0.2
+Version: 1.1.0
 Author URI: http://www.whiletrue.it/
 */
 
@@ -22,7 +22,7 @@ Author URI: http://www.whiletrue.it/
 
 $twitter_options['widget_fields']['title'] = array('label'=>'Sidebar Title:', 'type'=>'text', 'default'=>'');
 $twitter_options['widget_fields']['username'] = array('label'=>'Twitter Username:', 'type'=>'text', 'default'=>'');
-$twitter_options['widget_fields']['num'] = array('label'=>'Display # of links:', 'type'=>'text', 'default'=>'5');
+$twitter_options['widget_fields']['num'] = array('label'=>'How many tweets:', 'type'=>'text', 'default'=>'5');
 $twitter_options['widget_fields']['update'] = array('label'=>'Show timestamps:', 'type'=>'checkbox', 'default'=>true);
 $twitter_options['widget_fields']['linked'] = array('label'=>'Linked:', 'type'=>'text', 'default'=>'#');
 $twitter_options['widget_fields']['hyperlinks'] = array('label'=>'Show Hyperlinks:', 'type'=>'checkbox', 'default'=>true);
@@ -35,51 +35,53 @@ $twitter_options['prefix'] = 'twitter';
 function really_simple_twitter_messages($options) {
 	include_once(ABSPATH . WPINC . '/rss.php');
 	
+	// CHECK OPTIONS
+	
 	if ($options['username'] == '') {
-		$text = __('RSS not configured','really_simple_twitter_widget');
-		return '<ul class="twitter"><li>'.$text.'</li></ul>';
+		return __('RSS not configured','really_simple_twitter_widget');
 	} 
+	
+	if (!is_numeric($options['num']) or $options['num']<=0) {
+		return __('Number of tweets not valid','really_simple_twitter_widget');
+	}
+
+	// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
+	$max_items_to_retrieve = $options['num'];
+	if ($options['skip_text']!='') {
+		$max_items_to_retrieve *= 3;
+	}
 	
 	// MODIFY FEED CACHE LIFETIME ONLY FOR THIS FEED (30 minutes)
 	add_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
-	$rss = fetch_feed('http://twitter.com/statuses/user_timeline/'.$options['username'].'.rss');
+
+	//$rss = fetch_feed('http://twitter.com/statuses/user_timeline/'.$options['username'].'.rss');
+	// USE THE NEW TWITTER REST API
+	$rss = fetch_feed('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
+
+
 	// RESET STANDARD FEED CACHE LIFETIME (12 hours)
 	remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 
 	if (is_wp_error($rss)) {
-		$text = __('WP Error: Feed not created correctly','really_simple_twitter_widget');
-		return '<ul class="twitter"><li>'.$text.'</li></ul>';
+		return __('WP Error: Feed not created correctly','really_simple_twitter_widget');
 	}
 
-	$maxitems = $rss->get_item_quantity(); 
+	$max_items_retrieved = $rss->get_item_quantity(); 
 
-	if ($maxitems==0) {
-		$text = __('No public Twitter messages','really_simple_twitter_widget');
-		return '<ul class="twitter"><li>'.$text.'</li></ul>';
+	if ($max_items_retrieved==0) {
+		return __('No public Twitter messages','really_simple_twitter_widget');
 	}
 	
 	// SET THE MAX NUMBER OF ITEMS  
-	$num_items_shown = $maxitems;
-	if ($maxitems>$options['num'] and $options['num']>0) {
-		$num_items_shown = $options['num'];
+	$num_items_shown = $options['num'];
+	if ($max_items_retrieved<$options['num']) {
+		$num_items_shown = $max_items_retrieved;
 	}
 		
 	$out = '<ul class="really_simple_twitter_widget">';
 
-	// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
-	$num_items_retrieved = $num_items_shown;
-	if ($options['skip_text']!='') {
-		// TRY TO GET ITEMS*2
-		if ($maxitems > $num_items_shown*2) {
-			$num_items_retrieved = $num_items_shown*2;
-		} else {
-			// IT THERE AREN'T ENOUGH ITEMS, GET THEM ALL
-			$num_items_retrieved = $maxitems;
-		}
-	}
-
 	// BUILD AN ARRAY OF ALL THE ITEMS, STARTING WITH ELEMENT 0 (FIRST ELEMENT).
-	$rss_items = $rss->get_items(0, $num_items_retrieved); 
+	$rss_items = $rss->get_items(0, $max_items_retrieved); 
 
 	$i = 0;
 	foreach ($rss_items as $message) {
@@ -103,10 +105,10 @@ function really_simple_twitter_messages($options) {
 			// match name@address
 			$msg = preg_replace('/\b([a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]*\@[a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]{2,6})\b/i',"<a href=\"mailto://$1\" class=\"twitter-link\">$1</a>", $msg);
 			 //mach #trendingtopics
-			$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)#{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/#search?q=$2\" class=\"twitter-link\">#$2</a>$3 ", $msg);
+			$msg = preg_replace('/([\.|\,|\:|\Â¡|\Â¿|\>|\{|\(]?)#{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/#search?q=$2\" class=\"twitter-link\">#$2</a>$3 ", $msg);
 		}
 		if ($options['twitter_users'])  { 
-			$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\">@$2</a>$3 ", $msg);
+			$msg = preg_replace('/([\.|\,|\:|\Â¡|\Â¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\">@$2</a>$3 ", $msg);
 		}
           					
 		$link = $message->get_permalink();
