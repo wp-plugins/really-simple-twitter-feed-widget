@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.1.1
+Version: 1.2.0
 Author URI: http://www.whiletrue.it/
 */
 
@@ -19,17 +19,6 @@ Author URI: http://www.whiletrue.it/
     GNU General Public License for more details.
 */
 
-
-$twitter_options['widget_fields']['title'] = array('label'=>'Sidebar Title:', 'type'=>'text', 'default'=>'');
-$twitter_options['widget_fields']['username'] = array('label'=>'Twitter Username:', 'type'=>'text', 'default'=>'');
-$twitter_options['widget_fields']['num'] = array('label'=>'How many tweets:', 'type'=>'text', 'default'=>'5');
-$twitter_options['widget_fields']['update'] = array('label'=>'Show timestamps:', 'type'=>'checkbox', 'default'=>true);
-$twitter_options['widget_fields']['linked'] = array('label'=>'Linked:', 'type'=>'text', 'default'=>'#');
-$twitter_options['widget_fields']['hyperlinks'] = array('label'=>'Show Hyperlinks:', 'type'=>'checkbox', 'default'=>true);
-$twitter_options['widget_fields']['twitter_users'] = array('label'=>'Find @replies:', 'type'=>'checkbox', 'default'=>true);
-$twitter_options['widget_fields']['skip_text'] = array('label'=>'Skip tweets containing this text:', 'type'=>'text', 'default'=>'');
-$twitter_options['widget_fields']['encode_utf8'] = array('label'=>'UTF8 Encode:', 'type'=>'checkbox', 'default'=>false);
-$twitter_options['prefix'] = 'twitter';
 
 // Display Twitter messages
 function really_simple_twitter_messages($options) {
@@ -135,119 +124,83 @@ function really_simple_twitter_messages($options) {
 }
 
 
-// WIDGET FUNCTION
-function really_simple_widget_twitter_init() {
 
-	if ( !function_exists('register_sidebar_widget') ) {
-		return;
-	}
-	$check_options = get_option('really_simple_twitter_widget');
-	if (!is_numeric($check_options['number']) or $check_options['number'] < 1) {
-		$check_options['number'] = 1;
-		update_option('really_simple_twitter_widget', $check_options);
-	}
-  
-	function really_simple_widget_twitter($args, $number = 1) {
+/**
+ * ReallySimpleTwitterWidget Class
+ */
+class ReallySimpleTwitterWidget extends WP_Widget {
+    /** constructor */
+    function ReallySimpleTwitterWidget() {
+				$this->options = array(
+					array('name'=>'title', 'label'=>'Title:', 'type'=>'text'),
+					array('name'=>'username', 'label'=>'Twitter Username:', 'type'=>'text'),
+					array('name'=>'num', 'label'=>'How many tweets:', 'type'=>'text'),
+					array('name'=>'update', 'label'=>'Show timestamps:', 'type'=>'checkbox'),
+					array('name'=>'linked', 'label'=>'Link text:', 'type'=>'text'),
+					array('name'=>'hyperlinks', 'label'=>'Show Hyperlinks:', 'type'=>'checkbox'),
+					array('name'=>'twitter_users', 'label'=>'Find @replies:', 'type'=>'checkbox'),
+					array('name'=>'skip_text', 'label'=>'Skip tweets containing this text:', 'type'=>'text'),
+					array('name'=>'encode_utf8', 'label'=>'UTF8 Encode:', 'type'=>'checkbox'),
+				);
 
-		global $twitter_options;
-		
-		// $args is an array of strings that help widgets to conform to
-		// the active theme: before_widget, before_title, after_widget,
-		// and after_title are the array keys. Default tags: li and h2.
-		extract($args);
+        parent::WP_Widget(false, $name = 'ReallySimpleTwitterWidget');	
+    }
 
-		// Each widget can store its own options. We keep strings here.
-		$options = get_option('really_simple_twitter_widget');
-		
-		// fill options with default values if value is not set
-		$item = $options[$number];
-		foreach($twitter_options['widget_fields'] as $key => $field) {
-			if (! isset($item[$key])) {
-				$item[$key] = $field['default'];
-			}
-		}
-		
-		// These lines generate our output.
-		echo $before_widget . $before_title . '<a href="http://twitter.com/' . $item['username'] . '" class="twitter_title_link">'. $item['title'] . '</a>' . $after_title;
-		echo really_simple_twitter_messages($item);
-		echo $after_widget;
-	}
-
-	// This is the function that outputs the form to let the users edit
-	// the widget's title. It's an optional feature that users cry for.
-	function really_simple_widget_twitter_control($number) {
-	
-		global $twitter_options;
-
-		// Get our options and see if we're handling a form submission.
-		$options = get_option('really_simple_twitter_widget');
-		if ( isset($_POST['twitter-submit']) ) {
-
-			foreach($twitter_options['widget_fields'] as $key => $field) {
-				$options[$number][$key] = $field['default'];
-				$field_name = sprintf('%s_%s_%s', $twitter_options['prefix'], $key, $number);
-
-				if ($field['type'] == 'text') {
-					$options[$number][$key] = strip_tags(stripslashes($_POST[$field_name]));
-				} elseif ($field['type'] == 'checkbox') {
-					$options[$number][$key] = isset($_POST[$field_name]);
+    /** @see WP_Widget::widget */
+    function widget($args, $instance) {		
+				extract( $args );
+				$title = apply_filters('widget_title', $instance['title']);
+				echo $before_widget;  
+				if ( $title ) {
+					echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link">'. $instance['title'] . '</a>' . $after_title; 
 				}
-			}
+				echo really_simple_twitter_messages($instance);
+				echo $after_widget;
+    }
 
-			update_option('really_simple_twitter_widget', $options);
-		}
-
-		foreach($twitter_options['widget_fields'] as $key => $field) {
-			
-			$field_name = sprintf('%s_%s_%s', $twitter_options['prefix'], $key, $number);
-			$field_checked = '';
-			if ($field['type'] == 'text') {
-				$field_value = htmlspecialchars($options[$number][$key], ENT_QUOTES);
-			} elseif ($field['type'] == 'checkbox') {
-				$field_value = 1;
-				if (! empty($options[$number][$key])) {
-					$field_checked = 'checked="checked"';
+    /** @see WP_Widget::update */
+    function update($new_instance, $old_instance) {				
+				$instance = $old_instance;
+				
+				foreach ($this->options as $val) {
+					if ($val['type']=='text') {
+						$instance[$val['name']] = strip_tags($new_instance[$val['name']]);
+					} else if ($val['type']=='checkbox') {
+						$instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
+					}
 				}
-			}
-			
-			printf('<p style="text-align:right;" class="twitter_field"><label for="%s">%s <input id="%s" name="%s" type="%s" value="%s" class="%s" %s /></label></p>',
-				$field_name, __($field['label']), $field_name, $field_name, $field['type'], $field_value, $field['type'], $field_checked);
-		}
+        return $instance;
+    }
 
-		echo '<input type="hidden" id="twitter-submit" name="twitter-submit" value="1" />';
-	}
-	
-	function really_simple_widget_twitter_setup() {
-		$options = $newoptions = get_option('really_simple_twitter_widget');
-		
-		if ( isset($_POST['twitter-number-submit']) ) {
-			$number = (int) $_POST['twitter-number'];
-			$newoptions['number'] = $number;
-		}
-		
-		if ( $options != $newoptions ) {
-			update_option('really_simple_twitter_widget', $newoptions);
-			widget_twitter_register();
-		}
-	}
-	
-	
-	function really_simple_widget_twitter_register() {
-		
-		$options = get_option('really_simple_twitter_widget');
-		$dims = array('width' => 300, 'height' => 300);
-		$class = array('classname' => 'widget_twitter');
+    /** @see WP_Widget::form */
+    function form($instance) {
+				if (empty($instance)) {
+					$instance['title'] = 'Last Tweets';
+					$instance['username'] = '';
+					$instance['num'] = '5';
+					$instance['update'] = true;
+					$instance['linked'] = '#';
+					$instance['hyperlinks'] = true;
+					$instance['twitter_users'] = true;
+					$instance['skip_text'] = '';
+					$instance['encode_utf8'] = false;
+				}					
 
-		$name = __('Really Simple Twitter');
-		$id = "really-simple-twitter"; // Never never never translate an id
-		wp_register_sidebar_widget($id, $name, 'really_simple_widget_twitter', $class, 1);
-		wp_register_widget_control($id, $name, 'really_simple_widget_twitter_control', $dims, 1);
-		
-		add_action('sidebar_admin_setup', 'really_simple_widget_twitter_setup');
-	}
+				foreach ($this->options as $val) {
+					echo '<p>
+						      <label for="'.$this->get_field_id($val['name']).'">'.__($val['label']).'</label> 
+						   ';
+					if ($val['type']=='text') {
+						echo '<input class="widefat" id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr($instance[$val['name']]).'" />';
+					} else if ($val['type']=='checkbox') {
+						$checked = ($instance[$val['name']]) ? 'checked="checked"' : '';
+						echo '<input id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="checkbox" '.$checked.' />';
+					}
+					echo '</p>';
+				}
+    }
 
-	really_simple_widget_twitter_register();
-}
+} // class ReallySimpleTwitterWidget
 
-// Run our code later in case this loads prior to any required plugins.
-add_action('widgets_init', 'really_simple_widget_twitter_init');
+// register ReallySimpleTwitterWidget widget
+add_action('widgets_init', create_function('', 'return register_widget("ReallySimpleTwitterWidget");'));

@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.1
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -37,6 +37,9 @@ This plugin is based on previous work of Max Steel (Web Design Company, Pro Web 
 
 == Changelog ==
 
+= 1.2.0 =
+* Changed: FB Widget API adoption (carries multiple Widgets support)
+
 = 1.1.1 =
 * Changed: direct to the twitter.com search link
 
@@ -58,10 +61,13 @@ This plugin is based on previous work of Max Steel (Web Design Company, Pro Web 
 
 == Upgrade Notice ==
 
+= 1.2.0 =
+Due to the FB Widget API adoption, existing widgets need to be recreated
+
 = 1.0.0 =
 Initial release
 
 
 == Upcoming features ==
 
-* FB Widget API adoption (carries multiple Widgets support)
+* Target link choice (same window, new window)
