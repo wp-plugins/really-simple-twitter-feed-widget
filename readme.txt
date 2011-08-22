@@ -25,6 +25,11 @@ For more informations: http://www.whiletrue.it/en/projects/wordpress/25-really-s
 = Does the widget show my tweets in real time? =
 Yes they're shown in real time, although you have to refresh the page for them to appear.
 
+= How can I modify the styles? =
+
+The plugin follows the standard rules for "ul" and "li" elements in the sidebar. You can set your own style modifying or overriding these rules:
+ul.really_simple_twitter_widget { /* your stuff */ }
+ul.really_simple_twitter_widget li { /* your stuff */ }
 
 == Credits ==
 
