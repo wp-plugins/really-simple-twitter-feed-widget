@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -13,6 +13,15 @@ This plugin displays the latest posts from a Twitter account in a sidebar widget
 Easy customization of number of posts shown and replies detection.
 
 For more informations: http://www.whiletrue.it/en/projects/wordpress/25-really-simple-twitter-feed-widget-per-wordpress.html
+
+Do you like this plugin? Give a chance to our other works:
+
+* [Most and Least Read Posts](http://www.whiletrue.it/en/projects/wordpress/29-most-and-least-read-posts-widget-per-wordpress.html "Most and Least Read Posts")
+* [Random Tweet Widget](http://www.whiletrue.it/en/projects/wordpress/33-random-tweet-widget-per-wordpress.html "Random Tweet Widget")
+* [Reading Time](http://www.whiletrue.it/en/projects/wordpress/17-reading-time-per-wordpress.html "Reading Time")
+* [Really Simple Facebook Twitter Share Buttons](http://www.whiletrue.it/en/projects/wordpress/22-really-simple-facebook-twitter-share-buttons-per-wordpress.html "Really Simple Facebook Twitter Share Buttons")
+* [Tilted Twitter Cloud Widget](http://www.whiletrue.it/en/projects/wordpress/26-tilted-twitter-cloud-widget-per-wordpress.html "Tilted Twitter Cloud Widget")
+
 
 == Installation ==
 1. Upload the `really-simple-twitter-widget` directory into the `/wp-content/plugins/` directory
@@ -33,7 +42,9 @@ ul.really_simple_twitter_widget li { /* your stuff */ }
 
 == Credits ==
 
-This plugin is based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which is based on Pownce for Wordpress widget.
+The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
+
+The release 1.2.3 is based on the work of Frank Gregor.
 
 
 == Screenshots ==
@@ -41,6 +52,11 @@ This plugin is based on previous work of Max Steel (Web Design Company, Pro Web 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.2.3 =
+* Changed: a bit of UI
+* Added: switch for setting on/off a link of the title to the twitter user
+* Added: German translation
 
 = 1.2.2 =
 * Fixed: Broken 1.2.1 regular expression cleaning

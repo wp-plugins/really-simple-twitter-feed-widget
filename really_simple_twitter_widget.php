@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.2.2
+Version: 1.2.3
 Author URI: http://www.whiletrue.it/
 */
 
@@ -27,11 +27,11 @@ function really_simple_twitter_messages($options) {
 	// CHECK OPTIONS
 	
 	if ($options['username'] == '') {
-		return __('RSS not configured','really_simple_twitter_widget');
+		return __('RSS not configured','rstw');
 	} 
 	
 	if (!is_numeric($options['num']) or $options['num']<=0) {
-		return __('Number of tweets not valid','really_simple_twitter_widget');
+		return __('Number of tweets not valid','rstw');
 	}
 
 	// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
@@ -52,13 +52,13 @@ function really_simple_twitter_messages($options) {
 	remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 
 	if (is_wp_error($rss)) {
-		return __('WP Error: Feed not created correctly','really_simple_twitter_widget');
+		return __('WP Error: Feed not created correctly','rstw');
 	}
 
 	$max_items_retrieved = $rss->get_item_quantity(); 
 
 	if ($max_items_retrieved==0) {
-		return __('No public Twitter messages','really_simple_twitter_widget');
+		return __('No public Twitter messages','rstw');
 	}
 	
 	// SET THE MAX NUMBER OF ITEMS  
@@ -114,8 +114,8 @@ function really_simple_twitter_messages($options) {
 		
 		if($options['update']) {				
 			$time = strtotime($message->get_date());
-			$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago'), human_time_diff( $time )) : date(__('Y/m/d'), $time);
-			$out .= ', '.sprintf( __('%s', 'twitter-for-wordpress'),' <span class="twitter-timestamp"><abbr title="' . date(__('Y/m/d H:i:s'), $time) . '">' . $h_time . '</abbr></span>' );
+			$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date(__('Y/m/d'), $time);
+			$out .= ', '.sprintf( __('%s', 'rstw'),' <span class="twitter-timestamp"><abbr title="' . date(__('Y/m/d H:i:s', 'rstw'), $time) . '">' . $h_time . '</abbr></span>' );
 		}          
                   
 		$out .= '</li>';
@@ -131,76 +131,123 @@ function really_simple_twitter_messages($options) {
  * ReallySimpleTwitterWidget Class
  */
 class ReallySimpleTwitterWidget extends WP_Widget {
+	private /** @type {string} */ $languagePath;
+
     /** constructor */
     function ReallySimpleTwitterWidget() {
-				$this->options = array(
-					array('name'=>'title', 'label'=>'Title:', 'type'=>'text'),
-					array('name'=>'username', 'label'=>'Twitter Username:', 'type'=>'text'),
-					array('name'=>'num', 'label'=>'How many tweets:', 'type'=>'text'),
-					array('name'=>'update', 'label'=>'Show timestamps:', 'type'=>'checkbox'),
-					array('name'=>'linked', 'label'=>'Link text:', 'type'=>'text'),
-					array('name'=>'hyperlinks', 'label'=>'Show Hyperlinks:', 'type'=>'checkbox'),
-					array('name'=>'twitter_users', 'label'=>'Find @replies:', 'type'=>'checkbox'),
-					array('name'=>'skip_text', 'label'=>'Skip tweets containing this text:', 'type'=>'text'),
-					array('name'=>'encode_utf8', 'label'=>'UTF8 Encode:', 'type'=>'checkbox'),
-				);
+		$this->languagePath = basename(dirname(__FILE__)).'/languages';
+        load_plugin_textdomain('rstw', 'false', $this->languagePath);
+
+		$this->options = array(
+			array(
+				'name'	=> 'title',
+				'label'	=> __( 'Title', 'rstw' ),
+				'type'	=> 'text'
+			),
+			array(
+				'name'	=> 'username',
+				'label'	=> __( 'Twitter Username', 'rstw' ),
+				'type'	=> 'text'
+			),
+			array(
+				'name'	=> 'num',
+				'label'	=> __( 'Show # of Tweets', 'rstw' ),
+				'type'	=> 'text'
+			),
+			array(
+				'name'	=> 'linked',
+				'label'	=> __( 'Show this linked text for each Tweet', 'rstw' ),
+				'type'	=> 'text'
+			),
+			array(
+				'name'	=> 'skip_text',
+				'label'	=> __( 'Skip tweets containing this text', 'rstw' ),
+				'type'	=> 'text'
+			),
+			array(
+				'name'	=> 'link_title',
+				'label'	=> __( 'Link above Title with Twitter user', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'update',
+				'label'	=> __( 'Show timestamps', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'hyperlinks',
+				'label'	=> __( 'Find and show hyperlinks', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'twitter_users',
+				'label'	=> __( 'Find Replies in Tweets', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'encode_utf8',
+				'label'	=> __( 'UTF8 Encode', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+		);
 
         parent::WP_Widget(false, $name = 'ReallySimpleTwitterWidget');	
     }
 
     /** @see WP_Widget::widget */
     function widget($args, $instance) {		
-				extract( $args );
-				$title = apply_filters('widget_title', $instance['title']);
-				echo $before_widget;  
-				if ( $title ) {
-					echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link">'. $instance['title'] . '</a>' . $after_title; 
-				}
-				echo really_simple_twitter_messages($instance);
-				echo $after_widget;
+		extract( $args );
+		$title = apply_filters('widget_title', $instance['title']);
+		echo $before_widget;  
+		if ( $title ) {
+			if ( $instance['link_title'] === true )
+				echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link">'. $instance['title'] . '</a>' . $after_title;
+			else
+				echo $before_title . $instance['title'] . $after_title;
+		}
+		echo really_simple_twitter_messages($instance);
+		echo $after_widget;
     }
 
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {				
-				$instance = $old_instance;
-				
-				foreach ($this->options as $val) {
-					if ($val['type']=='text') {
-						$instance[$val['name']] = strip_tags($new_instance[$val['name']]);
-					} else if ($val['type']=='checkbox') {
-						$instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
-					}
-				}
+		$instance = $old_instance;
+		
+		foreach ($this->options as $val) {
+			if ($val['type']=='text') {
+				$instance[$val['name']] = strip_tags($new_instance[$val['name']]);
+			} else if ($val['type']=='checkbox') {
+				$instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
+			}
+		}
         return $instance;
     }
 
     /** @see WP_Widget::form */
     function form($instance) {
-				if (empty($instance)) {
-					$instance['title'] = 'Last Tweets';
-					$instance['username'] = '';
-					$instance['num'] = '5';
-					$instance['update'] = true;
-					$instance['linked'] = '#';
-					$instance['hyperlinks'] = true;
-					$instance['twitter_users'] = true;
-					$instance['skip_text'] = '';
-					$instance['encode_utf8'] = false;
-				}					
-
-				foreach ($this->options as $val) {
-					echo '<p>
-						      <label for="'.$this->get_field_id($val['name']).'">'.__($val['label']).'</label> 
-						   ';
-					if ($val['type']=='text') {
-						echo '<input class="widefat" id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr($instance[$val['name']]).'" />';
-					} else if ($val['type']=='checkbox') {
-						$checked = ($instance[$val['name']]) ? 'checked="checked"' : '';
-						echo '<input id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="checkbox" '.$checked.' />';
-					}
-					echo '</p>';
-				}
-    }
+		if (empty($instance)) {
+			$instance['title']			= __( 'Last Tweets', 'rstw' );
+			$instance['username']		= '';
+			$instance['num']			= '5';
+			$instance['update']			= true;
+			$instance['linked']			= '#';
+			$instance['hyperlinks'] 	= true;
+			$instance['twitter_users']	= true;
+			$instance['skip_text']		= '';
+			$instance['encode_utf8']	= false;
+		}					
+	
+		foreach ($this->options as $val) {
+			$label = '<label for="'.$this->get_field_id($val['name']).'">'.$val['label'].'</label>';
+			if ($val['type']=='text') {
+				echo '<p>'.$label.'<br />';
+				echo '<input class="widefat" id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr($instance[$val['name']]).'" /></p>';
+			} else if ($val['type']=='checkbox') {
+				$checked = ($instance[$val['name']]) ? 'checked="checked"' : '';
+				echo '<input id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="checkbox" '.$checked.' /> '.$label.'<br />';
+			}
+		}
+	}
 
 } // class ReallySimpleTwitterWidget
 
