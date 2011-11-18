@@ -109,4 +109,4 @@ Initial release
 
 == Upcoming features ==
 
-* Target link choice (same window, new window)
+* Cache time customization
