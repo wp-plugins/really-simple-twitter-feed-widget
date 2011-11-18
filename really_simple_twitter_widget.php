@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.2.3
+Version: 1.3.0
 Author URI: http://www.whiletrue.it/
 */
 
@@ -40,19 +40,23 @@ function really_simple_twitter_messages($options) {
 		$max_items_to_retrieve *= 3;
 	}
 	
-	// MODIFY FEED CACHE LIFETIME ONLY FOR THIS FEED (30 minutes)
-	add_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
+	// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
+	
+	if(false === ($rss = get_transient('twitter_rss_'.$options['username']) ) ){
 
-	//$rss = fetch_feed('http://twitter.com/statuses/user_timeline/'.$options['username'].'.rss');
-	// USE THE NEW TWITTER REST API
-	$rss = fetch_feed('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
+		// MODIFY FEED CACHE LIFETIME ONLY FOR THIS FEED (30 minutes)
+		add_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 
+		$rss = fetch_feed('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
 
-	// RESET STANDARD FEED CACHE LIFETIME (12 hours)
-	remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
+		// RESET STANDARD FEED CACHE LIFETIME (12 hours)
+		remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
 
-	if (is_wp_error($rss)) {
-		return __('WP Error: Feed not created correctly','rstw');
+		if (is_wp_error($rss)) {
+			return __('WP Error: Feed not created correctly','rstw').' <div id="message" class="error"><p>'.$rss->get_error_message().'</p></div>';;
+		}
+ 
+		set_transient('twitter_rss_'.$options['username'], $rss, 1800);	// SET TRANSIENT LIFETIME TO 30 MINUTES
 	}
 
 	$max_items_retrieved = $rss->get_item_quantity(); 
@@ -66,6 +70,8 @@ function really_simple_twitter_messages($options) {
 	if ($max_items_retrieved<$options['num']) {
 		$num_items_shown = $max_items_retrieved;
 	}
+	
+	$link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
 		
 	$out = '<ul class="really_simple_twitter_widget">';
 
@@ -95,10 +101,6 @@ function really_simple_twitter_messages($options) {
 			$msg = preg_replace('/\b([a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]*\@[a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]{2,6})\b/i',"<a href=\"mailto://$1\" class=\"twitter-link\">$1</a>", $msg);
 			//NEW mach #trendingtopics
 			$msg = preg_replace('/#([\w\pL-.,:>]+)/iu', '<a href="http://twitter.com/#!/search/\1" class="twitter-link">#\1</a>', $msg);
-
-			//OLD mach #trendingtopics
-			//$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)#{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/#!/search/$2\" class=\"twitter-link\">#$2</a>$3 ", $msg);
-			//$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)#{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/#search?q=$2\" class=\"twitter-link\">#$2</a>$3 ", $msg);
 		}
 		if ($options['twitter_users'])  { 
 			$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\">@$2</a>$3 ", $msg);
@@ -106,9 +108,9 @@ function really_simple_twitter_messages($options) {
           					
 		$link = $message->get_permalink();
 		if($options['linked'] == 'all')  { 
-			$msg = '<a href="'.$link.'" class="twitter-link">'.$msg.'</a>';  // Puts a link to the status of each tweet 
+			$msg = '<a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$msg.'</a>';  // Puts a link to the status of each tweet 
 		} else if ($options['linked'] != '') {
-			$msg = $msg . '<a href="'.$link.'" class="twitter-link">'.$options['linked'].'</a>'; // Puts a link to the status of each tweet
+			$msg = $msg . '<a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$options['linked'].'</a>'; // Puts a link to the status of each tweet
 		} 
 		$out .= $msg;
 		
@@ -122,6 +124,11 @@ function really_simple_twitter_messages($options) {
 		$i++;
 	}
 	$out .= '</ul>';
+	
+	if ($options['link_user']) {
+		$out .= '<div class="rstw_link_user"><a href="http://twitter.com/' . $options['username'] . '" '.$link_target.'>'.$options['username'].'</a></div>';
+	}
+	
 	return $out;
 }
 
@@ -170,6 +177,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'checkbox'
 			),
 			array(
+				'name'	=> 'link_user',
+				'label'	=> __( 'Link below tweets with Twitter user', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
 				'name'	=> 'update',
 				'label'	=> __( 'Show timestamps', 'rstw' ),
 				'type'	=> 'checkbox'
@@ -182,6 +194,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			array(
 				'name'	=> 'twitter_users',
 				'label'	=> __( 'Find Replies in Tweets', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'link_target_blank',
+				'label'	=> __( 'Create links on new window / tab', 'rstw' ),
 				'type'	=> 'checkbox'
 			),
 			array(
@@ -200,10 +217,12 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		$title = apply_filters('widget_title', $instance['title']);
 		echo $before_widget;  
 		if ( $title ) {
-			if ( $instance['link_title'] === true )
-				echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link">'. $instance['title'] . '</a>' . $after_title;
-			else
+			if ( $instance['link_title'] === true ) {
+				$link_target = ($instance['link_target_blank']) ? ' target="_blank" ' : '';
+				echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link" '.$link_target.'>'. $instance['title'] . '</a>' . $after_title;
+			} else {
 				echo $before_title . $instance['title'] . $after_title;
+			}
 		}
 		echo really_simple_twitter_messages($instance);
 		echo $after_widget;
