@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.2.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -56,6 +56,9 @@ The release 1.2.3 is based on the work of Frank Gregor.
 
 == Changelog ==
 
+= 1.3.1 =
+* Fixed: now retrieve data in JSON format for better storage with transient API and faster data update
+
 = 1.3.0 =
 * Changed: use Transient API to cache Twitter results, in order to reduce direct requests to the Twitter API
 * Added: option to add a link to the Twitter user page below the posts (CSS customizable via the "rstw_link_user" class)
@@ -96,6 +99,9 @@ The release 1.2.3 is based on the work of Frank Gregor.
 
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+A blocking bug appeared in the 1.3.0 release is fixed
 
 = 1.2.2 =
 A blocking bug appeared in the 1.2.1 release is fixed

@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.0
+Version: 1.3.1
 Author URI: http://www.whiletrue.it/
 */
 
@@ -22,7 +22,6 @@ Author URI: http://www.whiletrue.it/
 
 // Display Twitter messages
 function really_simple_twitter_messages($options) {
-	include_once(ABSPATH . WPINC . '/rss.php');
 	
 	// CHECK OPTIONS
 	
@@ -42,26 +41,17 @@ function really_simple_twitter_messages($options) {
 	
 	// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
 	
-	if(false === ($rss = get_transient('twitter_rss_'.$options['username']) ) ){
+	if (false === ($twitter_data = get_transient('twitter_data_'.$options['username']))) {
 
-		// MODIFY FEED CACHE LIFETIME ONLY FOR THIS FEED (30 minutes)
-		add_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
-
-		$rss = fetch_feed('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
-
-		// RESET STANDARD FEED CACHE LIFETIME (12 hours)
-		remove_filter( 'wp_feed_cache_transient_lifetime', create_function( '$a', 'return 1800;' ) );
-
-		if (is_wp_error($rss)) {
-			return __('WP Error: Feed not created correctly','rstw').' <div id="message" class="error"><p>'.$rss->get_error_message().'</p></div>';;
-		}
- 
-		set_transient('twitter_rss_'.$options['username'], $rss, 1800);	// SET TRANSIENT LIFETIME TO 30 MINUTES
+		$json = wp_remote_get('http://api.twitter.com/1/statuses/user_timeline.json?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
+ 		$twitter_data = json_decode($json['body'], true);
+    
+		set_transient('twitter_data_'.$options['username'], $twitter_data, 1800);	// SET TRANSIENT LIFETIME TO 30 MINUTES
 	}
 
-	$max_items_retrieved = $rss->get_item_quantity(); 
+	$max_items_retrieved = count($twitter_data); 
 
-	if ($max_items_retrieved==0) {
+	if (empty($twitter_data) || isset($twitter_data['error'])) {
 		return __('No public Twitter messages','rstw');
 	}
 	
@@ -75,15 +65,12 @@ function really_simple_twitter_messages($options) {
 		
 	$out = '<ul class="really_simple_twitter_widget">';
 
-	// BUILD AN ARRAY OF ALL THE ITEMS, STARTING WITH ELEMENT 0 (FIRST ELEMENT).
-	$rss_items = $rss->get_items(0, $max_items_retrieved); 
-
 	$i = 0;
-	foreach ($rss_items as $message) {
+	foreach($twitter_data as $message){
 		if ($i>=$num_items_shown) {
 			break;
 		}
-		$msg = " ".substr(strstr($message->get_description(),': '), 2, strlen($message->get_description()))." ";
+		$msg = $message['text'];
 		
 		if ($options['skip_text']!='' and strpos($msg, $options['skip_text'])!==false) {
 			continue;
@@ -106,16 +93,16 @@ function really_simple_twitter_messages($options) {
 			$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\">@$2</a>$3 ", $msg);
 		}
           					
-		$link = $message->get_permalink();
+		$link = 'http://twitter.com/#!/'.$options['username'].'/status/'.$message['id_str'];
 		if($options['linked'] == 'all')  { 
 			$msg = '<a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$msg.'</a>';  // Puts a link to the status of each tweet 
 		} else if ($options['linked'] != '') {
-			$msg = $msg . '<a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$options['linked'].'</a>'; // Puts a link to the status of each tweet
+			$msg = $msg . ' <a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$options['linked'].'</a>'; // Puts a link to the status of each tweet
 		} 
 		$out .= $msg;
 		
 		if($options['update']) {				
-			$time = strtotime($message->get_date());
+			$time = strtotime($message['created_at']);
 			$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date(__('Y/m/d'), $time);
 			$out .= ', '.sprintf( __('%s', 'rstw'),' <span class="twitter-timestamp"><abbr title="' . date(__('Y/m/d H:i:s', 'rstw'), $time) . '">' . $h_time . '</abbr></span>' );
 		}          
