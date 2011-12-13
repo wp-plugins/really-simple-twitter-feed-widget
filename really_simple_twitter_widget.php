@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.1
+Version: 1.3.2
 Author URI: http://www.whiletrue.it/
 */
 
@@ -26,7 +26,7 @@ function really_simple_twitter_messages($options) {
 	// CHECK OPTIONS
 	
 	if ($options['username'] == '') {
-		return __('RSS not configured','rstw');
+		return __('Twitter username not configured','rstw');
 	} 
 	
 	if (!is_numeric($options['num']) or $options['num']<=0) {
@@ -44,15 +44,19 @@ function really_simple_twitter_messages($options) {
 	if (false === ($twitter_data = get_transient('twitter_data_'.$options['username']))) {
 
 		$json = wp_remote_get('http://api.twitter.com/1/statuses/user_timeline.json?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
- 		$twitter_data = json_decode($json['body'], true);
+ 		if( is_wp_error( $response ) ) {
+			return __('Error retrieving tweets','rstw');
+		} else {
+			$twitter_data = json_decode($json['body'], true);
     
-		set_transient('twitter_data_'.$options['username'], $twitter_data, 1800);	// SET TRANSIENT LIFETIME TO 30 MINUTES
+			set_transient('twitter_data_'.$options['username'], $twitter_data, 1800);	// SET TRANSIENT LIFETIME TO 30 MINUTES
+		}
 	}
 
 	$max_items_retrieved = count($twitter_data); 
 
 	if (empty($twitter_data) || isset($twitter_data['error'])) {
-		return __('No public Twitter messages','rstw');
+		return __('No public tweets','rstw');
 	}
 	
 	// SET THE MAX NUMBER OF ITEMS  
@@ -113,7 +117,7 @@ function really_simple_twitter_messages($options) {
 	$out .= '</ul>';
 	
 	if ($options['link_user']) {
-		$out .= '<div class="rstw_link_user"><a href="http://twitter.com/' . $options['username'] . '" '.$link_target.'>'.$options['username'].'</a></div>';
+		$out .= '<div class="rstw_link_user"><a href="http://twitter.com/' . $options['username'] . '" '.$link_target.'>'.$options['link_user_text'].'</a></div>';
 	}
 	
 	return $out;
@@ -167,6 +171,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'name'	=> 'link_user',
 				'label'	=> __( 'Link below tweets with Twitter user', 'rstw' ),
 				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'link_user_text',
+				'label'	=> __( 'Text for link below tweets', 'rstw' ),
+				'type'	=> 'text'
 			),
 			array(
 				'name'	=> 'update',
