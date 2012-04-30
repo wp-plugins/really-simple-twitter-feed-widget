@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
-Tested up to: 3.3.1
-Stable tag: 1.3.4
+Tested up to: 3.3.2
+Stable tag: 1.3.5
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -47,14 +47,18 @@ div.rstw_link_user { /* your stuff */ }
 
 The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
 
-The release 1.2.3 is based on the work of Frank Gregor.
+The release 1.2.3 is based on the work of Jim Durand.
 
+The release 1.3.5 is based on the work of Frank Gregor.
 
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.5 =
+* Fixed: better caching errors control 
 
 = 1.3.4 =
 * Changed: better caching control, allowing two widget with same username and different number of messages
