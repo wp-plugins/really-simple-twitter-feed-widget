@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.3.2
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -56,6 +56,9 @@ The release 1.3.5 is based on the work of Frank Gregor.
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.6 =
+* Fixed: avoid php warning on preg_replace function (php 5.3.5 bug)
 
 = 1.3.5 =
 * Fixed: better caching errors control 
