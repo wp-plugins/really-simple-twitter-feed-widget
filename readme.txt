@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.3.2
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -24,10 +24,7 @@ Do you like this plugin? Give a chance to our other works:
 
 
 == Installation ==
-1. Upload the `really-simple-twitter-widget` directory into the `/wp-content/plugins/` directory
-2. Activate the plugin through the `Plugins` menu in WordPress
-3. Inside the `Themes->Widget` menu, place the Really Simple Twitter Widget inside a sidebar, customize the settings and save
-4. Enjoy!
+Best is to install directly from WordPress. If manual installation is required, please make sure to put all of the plugin files in a folder named `really-simple-twitter-widget` (not two nested folders) in the plugin directory, then activate the plugin through the `Plugins` menu in WordPress.
 
 == Frequently Asked Questions == 
 
@@ -47,9 +44,9 @@ div.rstw_link_user { /* your stuff */ }
 
 The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
 
-The release 1.2.3 is based on the work of Jim Durand.
+The release 1.2.3 is based on the work of Frank Gregor.
 
-The release 1.3.5 is based on the work of Frank Gregor.
+The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
@@ -57,11 +54,15 @@ The release 1.3.5 is based on the work of Frank Gregor.
 
 == Changelog ==
 
+= 1.3.7 =
+* Added: span wrapper element around the comma before the timestamp (class: rstw_comma), for easier design customization
+* Fixed: better caching errors control (work by Jim Durand)
+
 = 1.3.6 =
 * Fixed: avoid php warning on preg_replace function (php 5.3.5 bug)
 
 = 1.3.5 =
-* Fixed: better caching errors control 
+* Fixed: better caching errors control (work by Jim Durand) 
 
 = 1.3.4 =
 * Changed: better caching control, allowing two widget with same username and different number of messages
@@ -84,9 +85,9 @@ The release 1.3.5 is based on the work of Frank Gregor.
 * Added: Italian translation
 
 = 1.2.3 =
-* Changed: a bit of UI
-* Added: switch for setting on/off a link of the title to the twitter user
-* Added: German translation
+* Changed: a bit of UI (work by Frank Gregor)
+* Added: switch for setting on/off a link of the title to the twitter user (work by Frank Gregor)
+* Added: German translation (work by Frank Gregor)
 
 = 1.2.2 =
 * Fixed: Broken 1.2.1 regular expression cleaning

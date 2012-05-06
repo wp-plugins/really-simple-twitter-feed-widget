@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.6
+Version: 1.3.7
 Author URI: http://www.whiletrue.it/
 */
 
@@ -41,32 +41,78 @@ function really_simple_twitter_messages($options) {
 	
 	// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
 	
+	$timeout = 30 * 60; //30m
+	$error_timeout = 5 * 60; //5m
+	$no_cache_timeout = 60 * 60 * 24 * 365 * 10; //10 years should be fine...
+	
 	$transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
-	$twitter_data = get_transient($transient_name);
-	if (!$twitter_data || isset($twitter_data['error'])) {
+    
+    $twitter_data = get_transient($transient_name);
+    $twitter_status = get_transient($transient_name."_status");
+    
+	// Twitter Status
+    if(!$twitter_status || !$twitter_data) {
+        $json = wp_remote_get('http://api.twitter.com/1/account/rate_limit_status.json');
+		$twitter_status = json_decode($json['body'], true);
+        
+		set_transient($transient_name."_status", $twitter_status, $no_cache_timeout);
+    }
+	//echo "<!-- Twitter status: ".print_r($twitter_status,true)." -->";
+    $reset_seconds = (strtotime($twitter_status['reset_time'])-time());
+    
+    
+	// Tweets
+	if (!$twitter_data) {
 
+		//echo "\n<!-- Fetching data from Twitter... -->";                            /* Debug Stuff */
+		
+		if($twitter_status['remaining_hits'] <= 7) {
+		    $timeout = $reset_seconds;
+		    $error_timeout = $timeout;
+		}
+		
+	    //echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
+	    //echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
+	    //echo "\n<!-- Requested items : ".$max_items_to_retrieve." -->";             /* Debug Stuff */
+        
 		$json = wp_remote_get('http://api.twitter.com/1/statuses/user_timeline.json?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
  		if( is_wp_error( $json ) ) {
 			return __('Error retrieving tweets','rstw');
 		} else {
 			$twitter_data = json_decode($json['body'], true);
-    
-			 if(!isset($twitter_data['error'])) {
-			 	set_transient($transient_name, $twitter_data, 900);	// SET TRANSIENT LIFETIME TO 15 MINUTES
-			}
+                        
+            if(!isset($twitter_data['error']) && (count($twitter_data) == $options['num']) ) {
+			    set_transient($transient_name, $twitter_data, $timeout);
+			    set_transient($transient_name."_valid", $twitter_data, $no_cache_timeout);
+            } else {
+			    set_transient($transient_name, $twitter_data, $error_timeout);	// Wait 5 minutes before retry
+	            echo "\n<!-- Twitter error: ".$twitter_data['error']." -->";          /* Debug Stuff */
+		    }
+		}
+	} else {
+		//echo "\n<!-- Using cached Twitter data... -->";                             /* Debug Stuff */
+	    //echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
+	    //echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
+		if(isset($twitter_data['error'])) {
+	        echo "\n<!-- Twitter error: ".$twitter_data['error']." -->";              /* Debug Stuff */
+		} else {
+	        //echo "\n<!-- Twitter status: ".print_r($twitter_status,true)." -->";    /* Info Stuff */
+	        //echo "\n<!-- Twitter data: ".print_r($twitter_data,true)." -->";        /* Info Stuff */
 		}
 	}
-
-	$max_items_retrieved = count($twitter_data); 
-
+    
+	$items_retrieved = count($twitter_data); 
+    
 	if (empty($twitter_data) || isset($twitter_data['error'])) {
-		return __('No public tweets','rstw');
+	    if(false === ($twitter_data = get_transient($transient_name."_valid"))) {
+		    return __('No public tweets','rstw');
+		}
 	}
 	
 	// SET THE MAX NUMBER OF ITEMS  
 	$num_items_shown = $options['num'];
-	if ($max_items_retrieved<$options['num']) {
-		$num_items_shown = $max_items_retrieved;
+	if ($items_retrieved<$options['num']) {
+		$num_items_shown = $items_retrieved;
 	}
 	
 	$link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
@@ -112,7 +158,7 @@ function really_simple_twitter_messages($options) {
 		if($options['update']) {				
 			$time = strtotime($message['created_at']);
 			$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date(__('Y/m/d'), $time);
-			$out .= ', '.sprintf( __('%s', 'rstw'),' <span class="twitter-timestamp"><abbr title="' . date(__('Y/m/d H:i:s', 'rstw'), $time) . '">' . $h_time . '</abbr></span>' );
+			$out .= '<span class="rstw_comma">,</span> '.sprintf( __('%s', 'rstw'),' <span class="twitter-timestamp"><abbr title="' . date(__('Y/m/d H:i:s', 'rstw'), $time) . '">' . $h_time . '</abbr></span>' );
 		}          
                   
 		$out .= '</li>';
