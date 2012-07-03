@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
-Tested up to: 3.3.2
-Stable tag: 1.3.7
+Tested up to: 3.4.1
+Stable tag: 1.3.8
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -20,6 +20,7 @@ Do you like this plugin? Give a chance to our other works:
 * [Random Tweet Widget](http://www.whiletrue.it/en/projects/wordpress/33-random-tweet-widget-per-wordpress.html "Random Tweet Widget")
 * [Reading Time](http://www.whiletrue.it/en/projects/wordpress/17-reading-time-per-wordpress.html "Reading Time")
 * [Really Simple Facebook Twitter Share Buttons](http://www.whiletrue.it/en/projects/wordpress/22-really-simple-facebook-twitter-share-buttons-per-wordpress.html "Really Simple Facebook Twitter Share Buttons")
+* [Tilted Tag Cloud Widget](http://www.whiletrue.it/en/projects/wordpress/36-tilted-tag-cloud-widget-per-wordpress.html "Tilted Tag Cloud Widget")
 * [Tilted Twitter Cloud Widget](http://www.whiletrue.it/en/projects/wordpress/26-tilted-twitter-cloud-widget-per-wordpress.html "Tilted Twitter Cloud Widget")
 
 
@@ -53,6 +54,10 @@ The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.8 =
+* Changed: now the "Create links on new window/tab" option affects all kinds of link
+* Changed: different regular expression for hashtag recognition
 
 = 1.3.7 =
 * Added: span wrapper element around the comma before the timestamp (class: rstw_comma), for easier design customization
