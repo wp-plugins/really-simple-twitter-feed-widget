@@ -322,7 +322,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 	
 		foreach ($this->options as $val) {
 			$label = '<label for="'.$this->get_field_id($val['name']).'">'.$val['label'].'</label>';
-			if ($val['type']=='text') {
+			if ($val['type']=='separator') {
+				echo '<hr />';
+			} else if ($val['type']=='text') {
 				echo '<p>'.$label.'<br />';
 				echo '<input class="widefat" id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr($instance[$val['name']]).'" /></p>';
 			} else if ($val['type']=='checkbox') {
