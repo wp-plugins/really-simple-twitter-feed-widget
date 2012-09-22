@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.8
+Version: 1.3.9
 Author URI: http://www.whiletrue.it/
 */
 
@@ -195,6 +195,19 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'text'
 			),
 			array(
+				'name'	=> 'title_icon',
+				'label'	=> __( 'Show Twitter icon on title', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'name'	=> 'link_title',
+				'label'	=> __( 'Link above Title with Twitter user', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
+			array(
+				'type'	=> 'separator'
+			),
+			array(
 				'name'	=> 'username',
 				'label'	=> __( 'Twitter Username', 'rstw' ),
 				'type'	=> 'text'
@@ -215,9 +228,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'text'
 			),
 			array(
-				'name'	=> 'link_title',
-				'label'	=> __( 'Link above Title with Twitter user', 'rstw' ),
-				'type'	=> 'checkbox'
+				'type'	=> 'separator'
 			),
 			array(
 				'name'	=> 'link_user',
@@ -228,6 +239,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'name'	=> 'link_user_text',
 				'label'	=> __( 'Text for link below tweets', 'rstw' ),
 				'type'	=> 'text'
+			),
+			array(
+				'type'	=> 'separator'
 			),
 			array(
 				'name'	=> 'update',
@@ -265,11 +279,12 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		$title = apply_filters('widget_title', $instance['title']);
 		echo $before_widget;  
 		if ( $title ) {
+			$title_icon = ($instance['link_target_blank']) ? '<img src="'.WP_PLUGIN_URL.'/'.basename(dirname(__FILE__)).'/twitter_small.png" alt="'.$title.'" title="'.$title.'" /> ' : '';
 			if ( $instance['link_title'] === true ) {
 				$link_target = ($instance['link_target_blank']) ? ' target="_blank" ' : '';
-				echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link" '.$link_target.'>'. $instance['title'] . '</a>' . $after_title;
+				echo $before_title . '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link" '.$link_target.'>'. $title_icon . $instance['title'] . '</a>' . $after_title;
 			} else {
-				echo $before_title . $instance['title'] . $after_title;
+				echo $before_title . $title_icon . $instance['title'] . $after_title;
 			}
 		}
 		echo really_simple_twitter_messages($instance);
@@ -294,6 +309,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     function form($instance) {
 		if (empty($instance)) {
 			$instance['title']			= __( 'Last Tweets', 'rstw' );
+			$instance['title_icon']	= false;
 			$instance['username']		= '';
 			$instance['num']			= '5';
 			$instance['update']			= true;
