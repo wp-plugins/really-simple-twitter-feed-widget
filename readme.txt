@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.4.2
-Stable tag: 1.3.9
+Stable tag: 1.3.9.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -61,6 +61,9 @@ The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.9.1 =
+* Fixed: the Twitter icon wasn't properly shown (AKA never commit on Saturday!)
 
 = 1.3.9 =
 * Added: optional Twitter icon near the widget title
@@ -135,6 +138,9 @@ The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 
 
 == Upgrade Notice ==
+
+= 1.3.9.1 =
+A "saturday" bug appeared in the 1.3.9 release is fixed (the Twitter icon wasn't properly shown)
 
 = 1.3.1 =
 A blocking bug appeared in the 1.3.0 release is fixed
