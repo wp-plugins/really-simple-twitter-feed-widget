@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.9.1
+Version: 1.3.10
 Author URI: http://www.whiletrue.it/
 */
 
@@ -103,9 +103,16 @@ function really_simple_twitter_messages($options) {
     
 	$items_retrieved = count($twitter_data); 
     
-	if (empty($twitter_data) || isset($twitter_data['error'])) {
+	if (empty($twitter_data) and false === ($twitter_data = get_transient($transient_name."_valid"))) {
+	    return __('No public tweets','rstw');
+	}
+
+	if (isset($twitter_data['errors'])) {
+		// STORE ERROR FOR DISPLAY
+		$twitter_error = $twitter_data['errors'];
 	    if(false === ($twitter_data = get_transient($transient_name."_valid"))) {
-		    return __('No public tweets','rstw');
+			$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error[0]['code'].'] '.$twitter_error[0]['message'].' - username: "'.$options['username'].'"' : '';
+		    return __('Unable to get tweets'.$debug,'rstw');
 		}
 	}
 	
@@ -268,6 +275,14 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'label'	=> __( 'UTF8 Encode', 'rstw' ),
 				'type'	=> 'checkbox'
 			),
+			array(
+				'type'	=> 'separator'
+			),
+			array(
+				'name'	=> 'debug',
+				'label'	=> __( 'Show debug info', 'rstw' ),
+				'type'	=> 'checkbox'
+			),
 		);
 
         parent::WP_Widget(false, $name = 'Really Simple Twitter');	
@@ -318,6 +333,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			$instance['twitter_users']	= true;
 			$instance['skip_text']		= '';
 			$instance['encode_utf8']	= false;
+			$instance['debug']			= false;
 		}					
 	
 		foreach ($this->options as $val) {
