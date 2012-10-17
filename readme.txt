@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.4.2
-Stable tag: 1.3.10
+Stable tag: 1.3.11
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -12,9 +12,10 @@ Shows the latest tweets from a Twitter account in a sidebar widget.
 This plugin displays the latest posts from a Twitter account in a sidebar widget. 
 Easy customization of number of posts shown and replies detection.
 
-*New* in the 1.3.10 release:
+*New* in the 1.3.11 release:
 
-* Added: show debug info option
+* Added: more debug info
+* Fixed: feed error catching 
 
 
 For more informations: http://www.whiletrue.it/en/projects/wordpress/25-really-simple-twitter-feed-widget-per-wordpress.html
@@ -59,6 +60,10 @@ The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.11 =
+* Added: more debug info
+* Fixed: feed error catching 
 
 = 1.3.10 =
 * Added: show debug info option

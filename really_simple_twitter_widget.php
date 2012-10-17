@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.10
+Version: 1.3.11
 Author URI: http://www.whiletrue.it/
 */
 
@@ -51,29 +51,30 @@ function really_simple_twitter_messages($options) {
     $twitter_status = get_transient($transient_name."_status");
     
 	// Twitter Status
-    if(!$twitter_status || !$twitter_data) {
-        $json = wp_remote_get('http://api.twitter.com/1/account/rate_limit_status.json');
-		$twitter_status = json_decode($json['body'], true);
-        
-		set_transient($transient_name."_status", $twitter_status, $no_cache_timeout);
-    }
+	if(!$twitter_status || !$twitter_data) {
+		$json = wp_remote_get('http://api.twitter.com/1/account/rate_limit_status.json');
+ 		if( is_wp_error( $json ) ) {
+			if ($options['debug']) {
+				echo __('Error retrieving twitter rate limit','rstw').'<br />';
+			}
+		} else {
+			$twitter_status = json_decode($json['body'], true);
+			set_transient($transient_name."_status", $twitter_status, $no_cache_timeout);
+		}
+	}
 	//echo "<!-- Twitter status: ".print_r($twitter_status,true)." -->";
-    $reset_seconds = (strtotime($twitter_status['reset_time'])-time());
-    
+	$reset_seconds = (strtotime($twitter_status['reset_time'])-time());
     
 	// Tweets
 	if (!$twitter_data) {
-
 		//echo "\n<!-- Fetching data from Twitter... -->";                            /* Debug Stuff */
-		
 		if($twitter_status['remaining_hits'] <= 7) {
 		    $timeout = $reset_seconds;
 		    $error_timeout = $timeout;
 		}
-		
-	    //echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
-	    //echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
-	    //echo "\n<!-- Requested items : ".$max_items_to_retrieve." -->";             /* Debug Stuff */
+		//echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
+		//echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
+		//echo "\n<!-- Requested items : ".$max_items_to_retrieve." -->";             /* Debug Stuff */
         
 		$json = wp_remote_get('http://api.twitter.com/1/statuses/user_timeline.json?screen_name='.$options['username'].'&count='.$max_items_to_retrieve);
  		if( is_wp_error( $json ) ) {
@@ -81,23 +82,27 @@ function really_simple_twitter_messages($options) {
 		} else {
 			$twitter_data = json_decode($json['body'], true);
                         
-            if(!isset($twitter_data['error']) && (count($twitter_data) == $options['num']) ) {
+			if(!isset($twitter_data['error']) && (count($twitter_data) == $options['num']) ) {
 			    set_transient($transient_name, $twitter_data, $timeout);
 			    set_transient($transient_name."_valid", $twitter_data, $no_cache_timeout);
-            } else {
+			} else {
 			    set_transient($transient_name, $twitter_data, $error_timeout);	// Wait 5 minutes before retry
-	            echo "\n<!-- Twitter error: ".$twitter_data['error']." -->";          /* Debug Stuff */
-		    }
+				if (isset($twitter_data['error']) and $options['debug']) {
+					echo 'Twitter data error: '.$twitter_data['error'].'<br />';
+				}
+			}
 		}
 	} else {
-		//echo "\n<!-- Using cached Twitter data... -->";                             /* Debug Stuff */
-	    //echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
-	    //echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
+			//echo "\n<!-- Using cached Twitter data... -->";                             /* Debug Stuff */
+			//echo "\n<!-- API calls left : ".$twitter_status['remaining_hits']." -->";   /* Debug Stuff */
+			//echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
 		if(isset($twitter_data['error'])) {
-	        echo "\n<!-- Twitter error: ".$twitter_data['error']." -->";              /* Debug Stuff */
+			if ($options['debug']) {
+				echo 'Twitter data error: '.$twitter_data['error'].'<br />';
+			}
 		} else {
-	        //echo "\n<!-- Twitter status: ".print_r($twitter_status,true)." -->";    /* Info Stuff */
-	        //echo "\n<!-- Twitter data: ".print_r($twitter_data,true)." -->";        /* Info Stuff */
+			//echo "\n<!-- Twitter status: ".print_r($twitter_status,true)." -->";    /* Info Stuff */
+			//echo "\n<!-- Twitter data: ".print_r($twitter_data,true)." -->";        /* Info Stuff */
 		}
 	}
     
@@ -178,7 +183,6 @@ function really_simple_twitter_messages($options) {
 	if ($options['link_user']) {
 		$out .= '<div class="rstw_link_user"><a href="http://twitter.com/' . $options['username'] . '" '.$link_target.'>'.$options['link_user_text'].'</a></div>';
 	}
-	
 	return $out;
 }
 
