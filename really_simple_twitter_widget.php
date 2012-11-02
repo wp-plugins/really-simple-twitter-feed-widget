@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 1.3.11
+Version: 1.3.12
 Author URI: http://www.whiletrue.it/
 */
 
@@ -42,8 +42,7 @@ function really_simple_twitter_messages($options) {
 	// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
 	
 	$timeout = 30 * 60; //30m
-	$error_timeout = 5 * 60; //5m
-	$no_cache_timeout = 60 * 60 * 24 * 365 * 10; //10 years should be fine...
+	$error_timeout = 10 * 60; //10m
 	
 	$transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
     
@@ -66,7 +65,7 @@ function really_simple_twitter_messages($options) {
 	$reset_seconds = (strtotime($twitter_status['reset_time'])-time());
     
 	// Tweets
-	if (!$twitter_data) {
+	if (!$twitter_data or isset($twitter_data['error'])) {
 		//echo "\n<!-- Fetching data from Twitter... -->";                            /* Debug Stuff */
 		if($twitter_status['remaining_hits'] <= 7) {
 		    $timeout = $reset_seconds;
@@ -84,7 +83,7 @@ function really_simple_twitter_messages($options) {
                         
 			if(!isset($twitter_data['error']) && (count($twitter_data) == $options['num']) ) {
 			    set_transient($transient_name, $twitter_data, $timeout);
-			    set_transient($transient_name."_valid", $twitter_data, $no_cache_timeout);
+			    set_option($transient_name."_valid", $twitter_data);
 			} else {
 			    set_transient($transient_name, $twitter_data, $error_timeout);	// Wait 5 minutes before retry
 				if (isset($twitter_data['error']) and $options['debug']) {
@@ -98,7 +97,7 @@ function really_simple_twitter_messages($options) {
 			//echo "\n<!-- Time till reset : ".$reset_seconds." -->";                     /* Debug Stuff */
 		if(isset($twitter_data['error'])) {
 			if ($options['debug']) {
-				echo 'Twitter data error: '.$twitter_data['error'].'<br />';
+				echo 'Twitter cache error: '.$twitter_data['error'].'<br />';
 			}
 		} else {
 			//echo "\n<!-- Twitter status: ".print_r($twitter_status,true)." -->";    /* Info Stuff */
@@ -108,19 +107,27 @@ function really_simple_twitter_messages($options) {
     
 	$items_retrieved = count($twitter_data); 
     
-	if (empty($twitter_data) and false === ($twitter_data = get_transient($transient_name."_valid"))) {
+	if (empty($twitter_data) and false === ($twitter_data = get_option($transient_name."_valid"))) {
 	    return __('No public tweets','rstw');
 	}
 
 	if (isset($twitter_data['errors'])) {
 		// STORE ERROR FOR DISPLAY
 		$twitter_error = $twitter_data['errors'];
-	    if(false === ($twitter_data = get_transient($transient_name."_valid"))) {
+	    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
 			$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error[0]['code'].'] '.$twitter_error[0]['message'].' - username: "'.$options['username'].'"' : '';
 		    return __('Unable to get tweets'.$debug,'rstw');
 		}
 	}
-	
+	if (isset($twitter_data['error'])) {
+		// STORE ERROR FOR DISPLAY
+		$twitter_error = $twitter_data['error'];
+	    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
+			$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error.']  - username: "'.$options['username'].'"' : '';
+		    return __('Unable to get tweets'.$debug,'rstw');
+		}
+	}	
+
 	// SET THE MAX NUMBER OF ITEMS  
 	$num_items_shown = $options['num'];
 	if ($items_retrieved<$options['num']) {
@@ -185,7 +192,6 @@ function really_simple_twitter_messages($options) {
 	}
 	return $out;
 }
-
 
 
 /**
