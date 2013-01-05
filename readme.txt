@@ -56,8 +56,7 @@ The release 1.2.3 is based on the work of Frank Gregor.
 
 The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 
-Translators:
-
+= Translators =
 * Branco, Slovak translation (WebHostingGeeks.com)
 * WhileTrue, Italian translation (www.whiletrue.it)
 
