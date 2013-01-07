@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter
 Requires at least: 2.9+
 Tested up to: 3.5
-Stable tag: 1.3.15
+Stable tag: 1.3.16
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -57,14 +57,19 @@ The release 1.2.3 is based on the work of Frank Gregor.
 The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 
 = Translators =
+
 * Branco, Slovak translation (WebHostingGeeks.com)
 * WhileTrue, Italian translation (www.whiletrue.it)
+* Inspirats, French translation (rysk-x.com)
 
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 1.3.16 =
+* Added: French translation by Inspirats (rysk-x.com)
 
 = 1.3.15 =
 * Added: Slovak translation by Branco (WebHostingGeeks.com)
