@@ -13,11 +13,20 @@ This plugin displays the latest posts from a Twitter account in a sidebar widget
 Easy customization of number of posts shown and replies detection.
 
 
-= Bad news = 
+= Breaking news = 
 This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
-Unfortunately the new Twitter API, version 1.1, is based on a more closed approach, 
-so it won't be possible anymore for us to provide any "really simple" Twitter widget for WordPress. 
 
+The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
+to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
+Within your Application, Twitter provides two strings: the Consumer Key and the Consumer Secret.
+You also need two other strings, the Access Token and the Access Token Secret, that you can get
+following [this guide](https://dev.twitter.com/docs/auth/tokens-devtwittercom "this guide").
+Finally, enter all the Authorization string in the widget options box, along with your favorite display settings: your Twitter Widget is now ready and active!
+
+You can use the same Authorization strings for several widgets and multiple website. 
+Just remember to store them in a safe place!
+
+You also need to enable the CURL and OPENSSL extensions in your PHP environment.
 
 = Reference =
 
@@ -52,9 +61,11 @@ div.rstw_link_user { /* your stuff */ }
 
 The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
 
-The release 1.2.3 is based on the work of Frank Gregor.
+The 1.2.3 release is based on the work of Frank Gregor.
 
-The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
+The 1.3.5 and 1.3.7 releases are based on the work of Jim Durand.
+
+Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - https://github.com/mynetx/codebird-php ) is used for Twitter OAuth Authentication.
 
 = Translators =
 
@@ -68,6 +79,11 @@ The releases 1.3.5 and 1.3.7 are based on the work of Jim Durand.
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.0 =
+* Added: Twitter API 1.1 support
+* Changed: Brand new options box
+* Changed: Brand new debug system
 
 = 1.3.17 =
 * Added: Polish translation by Aleksandra Czuba (www.iwasindira.com)
