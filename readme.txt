@@ -1,16 +1,16 @@
 === Really Simple Twitter Feed Widget ===
 Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
-Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1
+Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.5.1
-Stable tag: 1.3.17
+Stable tag: 2.0
 
-Shows the latest tweets from a Twitter account in a sidebar widget.
+Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
 == Description ==
 This plugin displays the latest posts from a Twitter account in a sidebar widget. 
-Easy customization of number of posts shown and replies detection.
+Twitter API 1.1 ready, with easy customization of number of posts shown and replies detection.
 
 
 = Breaking news = 
@@ -186,6 +186,18 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 
 
 == Upgrade Notice ==
+
+= 2.0 =
+This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
+The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
+to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
+Within your Application, Twitter provides two strings: the Consumer Key and the Consumer Secret.
+You also need two other strings, the Access Token and the Access Token Secret, that you can get
+following [this guide](https://dev.twitter.com/docs/auth/tokens-devtwittercom "this guide").
+Finally, enter all the Authorization string in the widget options box, along with your favorite display settings: your Twitter Widget is now ready and active!
+You can use the same Authorization strings for several widgets and multiple website. 
+Just remember to store them in a safe place!
+You also need to enable the CURL and OPENSSL extensions in your PHP environment.
 
 = 1.3.13 =
 A blocking bug appeared in the 1.3.12 release is fixed
