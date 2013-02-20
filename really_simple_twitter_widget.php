@@ -221,14 +221,14 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 	
 		$transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
     
-	    $twitter_data = get_transient($transient_name);
-	    $twitter_status = get_transient($transient_name."_status");
+		$twitter_data = get_transient($transient_name);
+		$twitter_status = get_transient($transient_name."_status");
     
 		// Twitter Status
 		if(!$twitter_status || !$twitter_data) {
 			try {
 				$twitter_status = $this->cb->application_rateLimitStatus();
-				set_transient($transient_name."_status", $twitter_status, $no_cache_timeout);
+				set_transient($transient_name."_status", $twitter_status, $timeout);
 			} catch (Exception $e) { 
 				$this->debug($options, __('Error retrieving twitter rate limit').'<br />');
 			}

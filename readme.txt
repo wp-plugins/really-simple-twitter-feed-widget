@@ -82,6 +82,7 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 
 = 2.0.1 =
 * Changed: If widget title is not set, don't show the title box
+* Fixed: minor notice on Twitter status timeout
 
 = 2.0 =
 * Added: Twitter API 1.1 support
