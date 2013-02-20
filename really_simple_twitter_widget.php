@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.0.1
+Version: 2.0.2
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -238,7 +238,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     
 		// Tweets
 
-		if (!$twitter_data or isset($twitter_data->errors)) {
+		if (empty($twitter_data) or count($twitter_data)<1 or isset($twitter_data->errors)) {
 			$this->debug($options, '<!-- '.__('Fetching data from Twitter').'... -->');
 			$this->debug($options, '<!-- '.__('Requested items').' : '.$max_items_to_retrieve.' -->');
 			if($twitter_status->resources->statuses->$status_option->remaining <= 7) {
@@ -250,7 +250,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				$twitter_data =  $this->cb->statuses_userTimeline(array('screen_name'=>$options['username'], 'count'=>$max_items_to_retrieve));
 			} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
-			if(!isset($twitter_data->errors) && (count($twitter_data) == $options['num']) ) {
+			if(!isset($twitter_data->errors) and (count($twitter_data) >= 1) ) {
 			    set_transient($transient_name, $twitter_data, $timeout);
 			    update_option($transient_name."_valid", $twitter_data);
 			} else {
@@ -269,9 +269,6 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		$this->debug($options, '<!-- '.__('API calls left').' : '.$twitter_status->resources->statuses->$status_option->remaining.' -->');
 		$this->debug($options, '<!-- '.__('Seconds until reset').' : '.$reset_seconds.' -->');
     
-		$items_retrieved = count($twitter_data); 
-
- 
 		if (empty($twitter_data) and false === ($twitter_data = get_option($transient_name."_valid"))) {
 		    return __('No public tweets','rstw');
 		}
@@ -284,6 +281,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			    return __('Unable to get tweets'.$debug,'rstw');
 			}
 		}
+		/*
 		if (isset($twitter_data->error)) {
 			// STORE ERROR FOR DISPLAY
 			$twitter_error = $twitter_data->error;
@@ -292,12 +290,17 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			    return __('Unable to get tweets'.$debug,'rstw');
 			}
 		}	
+		*/
 
 		$link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
 		
 		$out = '<ul class="really_simple_twitter_widget">';
 
 		$i = 0;
+
+		if (empty($twitter_data) or count($twitter_data)<1) {
+		    return __('No public tweets','rstw');
+		}
 
 		foreach($twitter_data as $message) {
 
