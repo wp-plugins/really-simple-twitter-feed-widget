@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.0.2
+Version: 2.0.3
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -101,6 +101,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'separator'			),
 			array(
 				'name'	=> 'debug',	'label'	=> __( 'Show debug info', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false			),
+			array(
+				'name'	=> 'erase_cached_data',	'label'	=> __( 'Erase cached data (use it only for a few minutes, when having issues)', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => false			),
 		);
 
@@ -214,94 +217,111 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			$max_items_to_retrieve *= 3;
 		}
 	
-		// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
-	
-		$timeout = 30 * 60; //30m
-		$error_timeout = 10 * 60; //10m
-	
 		$transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
-    
-		$twitter_data = get_transient($transient_name);
-		$twitter_status = get_transient($transient_name."_status");
-    
-		// Twitter Status
-		if(!$twitter_status || !$twitter_data) {
-			try {
-				$twitter_status = $this->cb->application_rateLimitStatus();
-				set_transient($transient_name."_status", $twitter_status, $timeout);
-			} catch (Exception $e) { 
-				$this->debug($options, __('Error retrieving twitter rate limit').'<br />');
-			}
-		}
-		$status_option = '/statuses/user_timeline';
-		$reset_seconds = ((int)$twitter_status->resources->statuses->$status_option->reset-time());
-    
-		// Tweets
 
-		if (empty($twitter_data) or count($twitter_data)<1 or isset($twitter_data->errors)) {
+		if ($options['erase_cached_data']) {
 			$this->debug($options, '<!-- '.__('Fetching data from Twitter').'... -->');
-			$this->debug($options, '<!-- '.__('Requested items').' : '.$max_items_to_retrieve.' -->');
-			if($twitter_status->resources->statuses->$status_option->remaining <= 7) {
-			    $timeout = $reset_seconds;
-			    $error_timeout = $timeout;
-			}
-
+			$this->debug($options, '<!-- '.__('Erase cached data option enabled').'... -->');
+			delete_transient($transient_name);
+			delete_transient($transient_name.'_status');
+			delete_option($transient_name.'_valid');
+			
 			try {
 				$twitter_data =  $this->cb->statuses_userTimeline(array('screen_name'=>$options['username'], 'count'=>$max_items_to_retrieve));
 			} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
-			if(!isset($twitter_data->errors) and (count($twitter_data) >= 1) ) {
-			    set_transient($transient_name, $twitter_data, $timeout);
-			    update_option($transient_name."_valid", $twitter_data);
-			} else {
-			    set_transient($transient_name, $twitter_data, $error_timeout);	// Wait 5 minutes before retry
-				if (isset($twitter_data->errors)) {
-					$this->debug($options, __('Twitter data error:','rstw').' '.$twitter_data->errors[0]->message.'<br />');
-				}
+			if (isset($twitter_data->errors)) {
+				$this->debug($options, __('Twitter data error:','rstw').' '.$twitter_data->errors[0]->message.'<br />');
 			}
 		} else {
-			$this->debug($options, '<!-- '.__('Using cached Twitter data').'... -->');
-
-			if(isset($twitter_data->errors)) {
-				$this->debug($options, __('Twitter cache error:','rstw').' '.$twitter_data->errors[0]->message.'<br />');
-			}
-		}
-		$this->debug($options, '<!-- '.__('API calls left').' : '.$twitter_status->resources->statuses->$status_option->remaining.' -->');
-		$this->debug($options, '<!-- '.__('Seconds until reset').' : '.$reset_seconds.' -->');
+	
+			// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
+	
+			$timeout = 30 * 60; //30m
+			$error_timeout = 5 * 60; //5m
+	
     
-		if (empty($twitter_data) and false === ($twitter_data = get_option($transient_name."_valid"))) {
+			$twitter_data = get_transient($transient_name);
+			$twitter_status = get_transient($transient_name.'_status');
+    
+			// Twitter Status
+			if(!$twitter_status || !$twitter_data) {
+				try {
+					$twitter_status = $this->cb->application_rateLimitStatus();
+					set_transient($transient_name."_status", $twitter_status, $timeout);
+				} catch (Exception $e) { 
+					$this->debug($options, __('Error retrieving twitter rate limit').'<br />');
+				}
+			}
+			$status_option = '/statuses/user_timeline';
+			$reset_seconds = ((int)$twitter_status->resources->statuses->$status_option->reset-time());
+    
+			// Tweets
+
+			if (empty($twitter_data) or count($twitter_data)<1 or isset($twitter_data->errors)) {
+				$this->debug($options, '<!-- '.__('Fetching data from Twitter').'... -->');
+				$this->debug($options, '<!-- '.__('Requested items').' : '.$max_items_to_retrieve.' -->');
+				if($twitter_status->resources->statuses->$status_option->remaining <= 7) {
+				    $timeout = $reset_seconds;
+				    $error_timeout = $timeout;
+				}
+
+				try {
+					$twitter_data =  $this->cb->statuses_userTimeline(array('screen_name'=>$options['username'], 'count'=>$max_items_to_retrieve));
+				} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
+
+				if(!isset($twitter_data->errors) and (count($twitter_data) >= 1) ) {
+				    set_transient($transient_name, $twitter_data, $timeout);
+				    update_option($transient_name."_valid", $twitter_data);
+				} else {
+				    set_transient($transient_name, $twitter_data, $error_timeout);	// Wait 5 minutes before retry
+					if (isset($twitter_data->errors)) {
+						$this->debug($options, __('Twitter data error:','rstw').' '.$twitter_data->errors[0]->message.'<br />');
+					}
+				}
+			} else {
+				$this->debug($options, '<!-- '.__('Using cached Twitter data').'... -->');
+
+				if(isset($twitter_data->errors)) {
+					$this->debug($options, __('Twitter cache error:','rstw').' '.$twitter_data->errors[0]->message.'<br />');
+				}
+			}
+			$this->debug($options, '<!-- '.__('API calls left').' : '.$twitter_status->resources->statuses->$status_option->remaining.' -->');
+			$this->debug($options, '<!-- '.__('Seconds until reset').' : '.$reset_seconds.' -->');
+    
+			if (empty($twitter_data) and false === ($twitter_data = get_option($transient_name."_valid"))) {
+			    return __('No public tweets','rstw');
+			}
+
+			if (isset($twitter_data->errors)) {
+				// STORE ERROR FOR DISPLAY
+				$twitter_error = $twitter_data->errors;
+			    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
+					$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error[0]['code'].'] '.$twitter_error[0]['message'].' - username: "'.$options['username'].'"' : '';
+				    return __('Unable to get tweets'.$debug,'rstw');
+				}
+			}
+			/*
+			if (isset($twitter_data->error)) {
+				// STORE ERROR FOR DISPLAY
+				$twitter_error = $twitter_data->error;
+			    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
+					$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error.']  - username: "'.$options['username'].'"' : '';
+				    return __('Unable to get tweets'.$debug,'rstw');
+				}
+			}	
+			*/
+		}
+
+
+		if (empty($twitter_data) or count($twitter_data)<1) {
 		    return __('No public tweets','rstw');
 		}
-
-		if (isset($twitter_data->errors)) {
-			// STORE ERROR FOR DISPLAY
-			$twitter_error = $twitter_data->errors;
-		    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
-				$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error[0]['code'].'] '.$twitter_error[0]['message'].' - username: "'.$options['username'].'"' : '';
-			    return __('Unable to get tweets'.$debug,'rstw');
-			}
-		}
-		/*
-		if (isset($twitter_data->error)) {
-			// STORE ERROR FOR DISPLAY
-			$twitter_error = $twitter_data->error;
-		    if(false === ($twitter_data = get_option($transient_name."_valid"))) {
-				$debug = ($options['debug']) ? '<br /><i>Debug info:</i> ['.$twitter_error.']  - username: "'.$options['username'].'"' : '';
-			    return __('Unable to get tweets'.$debug,'rstw');
-			}
-		}	
-		*/
-
 		$link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
 		
 		$out = '<ul class="really_simple_twitter_widget">';
 
 		$i = 0;
-
-		if (empty($twitter_data) or count($twitter_data)<1) {
-		    return __('No public tweets','rstw');
-		}
-
 		foreach($twitter_data as $message) {
 
 			// CHECK THE NUMBER OF ITEMS SHOWN
@@ -310,6 +330,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			}
 			$msg = $message->text;
 		
+			if ($msg=='') {
+				continue;
+			}
 			if ($options['skip_text']!='' and strpos($msg, $options['skip_text'])!==false) {
 				continue;
 			}
