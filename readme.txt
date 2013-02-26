@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.5.1
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -14,10 +14,9 @@ Twitter API 1.1 ready, with easy customization of number of posts shown and repl
 
 
 = Breaking news = 
-This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
 
-The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
-to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
+Starting from the 2.0 release, the plugin is based on Twitter API version 1.1. 
+In order to use it, you have to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
 Within your Application, Twitter provides two strings: the Consumer Key and the Consumer Secret.
 You also need two other strings, the Access Token and the Access Token Secret, that you can get
 following [this guide](https://dev.twitter.com/docs/auth/tokens-devtwittercom "this guide").
@@ -80,7 +79,12 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 
 == Changelog ==
 
-= 2.0.2 =
+= 2.0.4 =
+* Changed: More reasonable options display
+* Changed: Only show Twitter API debug status when getting actual Twitter data
+* Fixed: Twitter object format causing PHP warnings
+
+= 2.0.3 =
 * Added: Erase cached data option (to be used only for a few minutes, when having issues)
 
 = 2.0.2 =
