@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.5.1
-Stable tag: 2.0.4
+Stable tag: 2.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -50,11 +50,19 @@ Yes they're shown in real time, although you have to refresh the page for them t
 = How can I modify the styles? =
 
 The plugin follows the standard rules for "ul" and "li" elements in the sidebar. You can set your own style modifying or overriding these rules:
-ul.really_simple_twitter_widget { /* your stuff */ }
-ul.really_simple_twitter_widget li { /* your stuff */ }
+.really_simple_twitter_widget { /* your stuff */ }
+.really_simple_twitter_widget li { /* your stuff */ }
 
 As for the linked username on the bottom (if enabled), you can customize it this way:
 div.rstw_link_user { /* your stuff */ }
+
+= I've enable user thumbnails. How can I make them look better? =
+
+You can use some CSS rules like these:
+`.really_simple_twitter_widget     { margin-left:0; }`
+`.really_simple_twitter_widget li  { margin-bottom:6px; clear:both; list-style:none;   }`
+`.really_simple_twitter_widget img { margin-right :6px; float:left; border-radius:4px; }`
+
 
 == Credits ==
 
@@ -78,6 +86,12 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.1 =
+* Added: Show thumbnail option
+* Added: Limit to 200 tweets as stated in Twitter API
+* Added: Skip replies option, active by default for new widgets
+* Changed: Cache timeout lowered from 30 to 10 minutes
 
 = 2.0.4 =
 * Changed: More reasonable options display

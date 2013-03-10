@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.0.4
+Version: 2.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -58,6 +58,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'name'	=> 'skip_text',		'label'	=> __( 'Skip tweets containing this text', 'rstw' ),
 				'type'	=> 'text',	'default' => ''			),
 			array(
+				'name'	=> 'skip_replies',		'label'	=> __( 'Skip replies', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => true	),
+			array(
 				'label' => __( 'Widget title options', 'rstw' ),
 				'type'	=> 'separator'			),
 			array(
@@ -78,6 +81,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			array(
 				'name'	=> 'update',	'label'	=> __( 'Show timestamps', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true			),
+			array(
+				'name'	=> 'thumbnail',	'label'	=> __( 'Include thumbnail before tweets', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false			),			
 			array(
 				'name'	=> 'hyperlinks',	'label'	=> __( 'Find and show hyperlinks', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true			),
@@ -221,8 +227,12 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
 		// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
 		$max_items_to_retrieve = $options['num'];
-		if ($options['skip_text']!='') {
+		if ($options['skip_text']!='' or $options['skip_replies']) {
 			$max_items_to_retrieve *= 3;
+		}
+		// TWITTER API GIVES MAX 200 TWEETS PER REQUEST
+		if ($max_items_to_retrieve>200) {
+			$max_items_to_retrieve = 200;
 		}
 	
 		$transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
@@ -235,7 +245,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			delete_option($transient_name.'_valid');
 			
 			try {
-				$twitter_data =  $this->cb->statuses_userTimeline(array('screen_name'=>$options['username'], 'count'=>$max_items_to_retrieve));
+				$twitter_data =  $this->cb->statuses_userTimeline(array(
+							'screen_name'=>$options['username'], 
+							'count'=>$max_items_to_retrieve,
+							'exclude_replies'=>$options['skip_replies']
+					));
 			} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
 			if (isset($twitter_data['errors'])) {
@@ -245,9 +259,8 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 	
 			// USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
 	
-			$timeout = 30 * 60; //30m
+			$timeout = 10 * 60; //10m
 			$error_timeout = 5 * 60; //5m
-	
     
 			$twitter_data = get_transient($transient_name);
 			$twitter_status = get_transient($transient_name.'_status');
@@ -280,7 +293,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				}
 
 				try {
-					$twitter_data =  $this->cb->statuses_userTimeline(array('screen_name'=>$options['username'], 'count'=>$max_items_to_retrieve));
+					$twitter_data =  $this->cb->statuses_userTimeline(array(
+							'screen_name'=>$options['username'], 
+							'count'=>$max_items_to_retrieve, 
+							'exclude_replies'=>$options['skip_replies']
+						));
 				} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
 				if(!isset($twitter_data['errors']) and (count($twitter_data) >= 1) ) {
@@ -341,7 +358,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			if($options['encode_utf8']) $msg = utf8_encode($msg);
 				
 			$out .= '<li>';
-
+			
+			// TODO: LINK
+			if ($options['thumbnail'] and $message['user']['profile_image_url_https']!='') {
+				$out .= '<img src="'.$message['user']['profile_image_url_https'].'" />';
+			}
 			if ($options['hyperlinks']) { 
 				// match protocol://address/path/file.extension?some=variable&another=asf%
 				$msg = preg_replace('/\b([a-zA-Z]+:\/\/[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);
