@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.1
+Version: 2.1.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -76,7 +76,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'label' => __( 'Links and display options', 'rstw' ),
 				'type'	=> 'separator'			),
 			array(
-				'name'	=> 'linked',		'label'	=> __( 'Show this linked text for each Tweet', 'rstw' ),
+				'name'	=> 'linked',		'label'	=> __( 'Show this linked text at the end of each Tweet', 'rstw' ),
 				'type'	=> 'text',	'default' => ''			),
 			array(
 				'name'	=> 'update',	'label'	=> __( 'Show timestamps', 'rstw' ),
@@ -87,6 +87,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			array(
 				'name'	=> 'hyperlinks',	'label'	=> __( 'Find and show hyperlinks', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true			),
+			array(
+				'name'	=> 'replace_link_text',	'label'	=> __( 'Replace hyperlinks text inside tweets with fixed text (e.g. "-->")', 'rstw' ),
+				'type'	=> 'text',	'default' => ''			),
 			array(
 				'name'	=> 'twitter_users',	'label'	=> __( 'Find Replies in Tweets', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true			),
@@ -363,11 +366,18 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			if ($options['thumbnail'] and $message['user']['profile_image_url_https']!='') {
 				$out .= '<img src="'.$message['user']['profile_image_url_https'].'" />';
 			}
-			if ($options['hyperlinks']) { 
-				// match protocol://address/path/file.extension?some=variable&another=asf%
-				$msg = preg_replace('/\b([a-zA-Z]+:\/\/[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);
-				// match www.something.domain/path/file.extension?some=variable&another=asf%
-				$msg = preg_replace('/\b(?<!:\/\/)(www\.[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"http://$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);    
+			if ($options['hyperlinks']) {
+				if ($options['replace_link_text']!='') {
+					// match protocol://address/path/file.extension?some=variable&another=asf%
+					$msg = preg_replace('/\b([a-zA-Z]+:\/\/[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"$1\" class=\"twitter-link\" ".$link_target." title=\"$1\">".$options['replace_link_text']."</a>", $msg);
+					// match www.something.domain/path/file.extension?some=variable&another=asf%
+					$msg = preg_replace('/\b(?<!:\/\/)(www\.[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"http://$1\" class=\"twitter-link\" ".$link_target." title=\"$1\">".$options['replace_link_text']."</a>", $msg);    
+				} else {
+					// match protocol://address/path/file.extension?some=variable&another=asf%
+					$msg = preg_replace('/\b([a-zA-Z]+:\/\/[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);
+					// match www.something.domain/path/file.extension?some=variable&another=asf%
+					$msg = preg_replace('/\b(?<!:\/\/)(www\.[\w_.\-]+\.[a-zA-Z]{2,6}[\/\w\-~.?=&%#+$*!]*)\b/i',"<a href=\"http://$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);    
+				}
 				// match name@address
 				$msg = preg_replace('/\b([a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]*\@[a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]{2,6})\b/i',"<a href=\"mailto://$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);
 				//NEW mach #trendingtopics
