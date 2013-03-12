@@ -1,7 +1,7 @@
 === Really Simple Twitter Feed Widget ===
 Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
-Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
+Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.5.1
 Stable tag: 2.1.1
