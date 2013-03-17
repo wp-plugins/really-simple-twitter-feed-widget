@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.1.1
+Version: 2.2
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -61,6 +61,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'name'	=> 'skip_replies',		'label'	=> __( 'Skip replies', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true	),
 			array(
+				'name'	=> 'skip_retweets',		'label'	=> __( 'Skip retweets', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false	),
+			array(
 				'label' => __( 'Widget title options', 'rstw' ),
 				'type'	=> 'separator'			),
 			array(
@@ -83,6 +86,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'checkbox',	'default' => true			),
 			array(
 				'name'	=> 'thumbnail',	'label'	=> __( 'Include thumbnail before tweets', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false			),			
+			array(
+				'name'	=> 'thumbnail_retweets',	'label'	=> __( 'Use author thumb for retweets', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => false			),			
 			array(
 				'name'	=> 'hyperlinks',	'label'	=> __( 'Find and show hyperlinks', 'rstw' ),
@@ -176,9 +182,10 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		
 		foreach ($this->options as $val) {
 			if ($val['type']=='separator') {
-				echo '<hr />';
 				if ($val['label']!='') {
 					echo '<h3>'.$val['label'].'</h3>';
+				} else {
+					echo '<hr />';
 				}
 				if ($val['notes']!='') {
 					echo '<span class="description">'.$val['notes'].'</span>';
@@ -230,7 +237,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
 		// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
 		$max_items_to_retrieve = $options['num'];
-		if ($options['skip_text']!='' or $options['skip_replies']) {
+		if ($options['skip_text']!='' or $options['skip_replies'] or $options['skip_retweets']) {
 			$max_items_to_retrieve *= 3;
 		}
 		// TWITTER API GIVES MAX 200 TWEETS PER REQUEST
@@ -251,7 +258,8 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				$twitter_data =  $this->cb->statuses_userTimeline(array(
 							'screen_name'=>$options['username'], 
 							'count'=>$max_items_to_retrieve,
-							'exclude_replies'=>$options['skip_replies']
+							'exclude_replies'=>$options['skip_replies'],
+							'include_rts'=>(!$options['skip_retweets'])
 					));
 			} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
@@ -299,7 +307,8 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 					$twitter_data =  $this->cb->statuses_userTimeline(array(
 							'screen_name'=>$options['username'], 
 							'count'=>$max_items_to_retrieve, 
-							'exclude_replies'=>$options['skip_replies']
+							'exclude_replies'=>$options['skip_replies'],
+							'include_rts'=>(!$options['skip_retweets'])
 						));
 				} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
@@ -350,7 +359,18 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			if ($i>=$options['num']) {
 				break;
 			}
+
 			$msg = $message['text'];
+			
+			// RECOVER ORIGINAL MESSAGE FOR RETWEETS
+			if (count($message['retweeted_status'])>0) {
+				$msg = 'RT @'.$message['retweeted_status']['user']['screen_name'].': '.$message['retweeted_status']['text'];
+
+				if ($options['thumbnail_retweets']) {
+					$message = $message['retweeted_status'];
+				}
+			}
+
 		
 			if ($msg=='') {
 				continue;
