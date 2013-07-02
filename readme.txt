@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.5.2
-Stable tag: 2.3.1
+Stable tag: 2.3.1.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -88,6 +88,9 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.3.1.1 =
+* Fixed: class_exists check is now namespace safe
 
 = 2.3.1 =
 * Changed: updated Codebird library
@@ -234,6 +237,9 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 
 
 == Upgrade Notice ==
+
+= 2.3.1.1 =
+The class_exists check is now namespace safe, users with multiple Codebird instances should upgrade
 
 = 2.3.1 =
 Starting from this release, PHP >= 5.3 is needed (required by the latest Codebird Twitter API).
