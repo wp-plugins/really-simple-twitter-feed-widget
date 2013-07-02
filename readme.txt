@@ -235,6 +235,12 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 
 == Upgrade Notice ==
 
+= 2.3.1 =
+Starting from this release, PHP >= 5.3 is needed (required by the latest Codebird Twitter API).
+
+If your PHP version is lower than 5.3, download and install the previous 
+[2.3 plugin release](http://downloads.wordpress.org/plugin/really-simple-twitter-feed-widget.2.3.zip "2.3 plugin release") and avoid future updates.
+
 = 2.0 =
 This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
 The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
