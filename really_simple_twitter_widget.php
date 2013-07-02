@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.3
+Version: 2.3.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -228,8 +228,8 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		if (!class_exists('Codebird')) {
 			require ('lib/codebird.php');
 		}
-		Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
-		$this->cb = Codebird::getInstance();	
+		\Codebird\Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
+		$this->cb = \Codebird\Codebird::getInstance();	
 		$this->cb->setToken($options['access_token'], $options['access_token_secret']);
 		
 		// From Codebird documentation: For API methods returning multiple data (like statuses/home_timeline), you should cast the reply to array
@@ -261,7 +261,10 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 							'exclude_replies'=>$options['skip_replies'],
 							'include_rts'=>(!$options['skip_retweets'])
 					));
-			} catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
+			} catch (Exception $e) {
+				$this->debug($options, $e->getMessage().'<br />');
+				return __('Error retrieving tweets','rstw'); 
+			}
 
 			if (isset($twitter_data['errors'])) {
 				$this->debug($options, __('Twitter data error:','rstw').' '.$twitter_data['errors'][0]['message'].'<br />');
