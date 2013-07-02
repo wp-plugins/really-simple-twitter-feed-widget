@@ -23,7 +23,9 @@ Finally, enter all the Authorization string in the widget options box, along wit
 You can use the same Authorization strings for several widgets and multiple website. 
 Just remember to store them in a safe place!
 
-You also need to enable the CURL and OPENSSL extensions in your PHP environment.
+You also need PHP >= 5.3 along with CURL and OPENSSL extensions enabled in your PHP environment.
+
+If your PHP version is lower than 5.3, download and install the previous [2.3 plugin release](http://downloads.wordpress.org/plugin/really-simple-twitter-feed-widget.2.3.zip "2.3 plugin release").
 
 = Reference =
 
