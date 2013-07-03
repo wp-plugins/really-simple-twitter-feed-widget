@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.3.1.1
+Version: 2.3.1.2
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -225,11 +225,20 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			return __('Twitter Authentication data is incomplete','rstw');
 		} 
 
-		if (!class_exists('\\Codebird\\Codebird')) {
-			require ('lib/codebird.php');
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			if (!class_exists('\\Codebird\\Codebird')) {
+				require ('lib/codebird.php');
+			}
+			\Codebird\Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
+			$this->cb = \Codebird\Codebird::getInstance();	
+		} else {
+			if (!class_exists('Codebird')) {
+				require ('lib/codebird_2.2.3.php');
+			}
+			Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
+			$this->cb = Codebird::getInstance();	
 		}
-		\Codebird\Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
-		$this->cb = \Codebird\Codebird::getInstance();	
+
 		$this->cb->setToken($options['access_token'], $options['access_token_secret']);
 		
 		// From Codebird documentation: For API methods returning multiple data (like statuses/home_timeline), you should cast the reply to array
