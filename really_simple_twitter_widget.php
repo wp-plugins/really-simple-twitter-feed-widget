@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.4
+Version: 2.4.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -231,7 +231,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 	
 
 	// Display Twitter messages
-	protected function really_simple_twitter_messages($options) {
+	public function really_simple_twitter_messages($options) {
 	
 		// CHECK OPTIONS
 
@@ -463,5 +463,37 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
 } // class ReallySimpleTwitterWidget
 
+
+// SHORTCODE FUNCTION
+function really_simple_twitter_shortcode ($atts) {
+	// e.g. [really_simple_twitter username="" consumer_key="" consumer_secret="" access_token="" access_token_secret=""]
+	
+	$rstw = new ReallySimpleTwitterWidget();
+
+	$default_options = array();
+	foreach ($rstw->options as $val) {
+		if ($val['type']=='separator') {
+			continue;
+		}
+		$default_options[$val['name']] = $val['default'];
+	}
+	$atts = shortcode_atts( $default_options , $atts );
+
+	// CLEAN CHECKBOX BOOLEAN VALUES
+	foreach ($rstw->options as $val) {
+		if ($val['type']=='checkbox' and $atts[$val['name']]==="true") {
+			$atts[$val['name']] = true;
+		}
+		if ($val['type']=='checkbox' and $atts[$val['name']]==="false") {
+			$atts[$val['name']] = false;
+		}
+	}
+
+	return $rstw->really_simple_twitter_messages($atts);
+}
+
+
 // register ReallySimpleTwitterWidget widget
 add_action('widgets_init', create_function('', 'return register_widget("ReallySimpleTwitterWidget");'));
+
+add_shortcode( 'really_simple_twitter', 'really_simple_twitter_shortcode' );

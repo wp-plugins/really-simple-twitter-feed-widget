@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
-Tested up to: 3.5.2
-Stable tag: 2.4
+Tested up to: 3.6
+Stable tag: 2.4.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -24,6 +24,22 @@ You can use the same Authorization strings for several widgets and multiple webs
 Just remember to store them in a safe place!
 
 You also need CURL and OPENSSL extensions enabled in your PHP environment.
+
+= Shortcode =
+
+If you want to put your recent tweets other than in a widget, you can use the [really_simple_twitter] shortcode. 
+The shortcode support is experimental. 
+
+At the moment at least the twitter username and the 4 authentication attributes are mandatory. The shortcode minimal configuration is (with all fields filled):
+
+[really_simple_twitter username="" consumer_key="" consumer_secret="" access_token="" access_token_secret=""]
+
+You can specify other optional attributes, e.g.:
+
+* num (number of tweets to show, e.g. num="10")
+* skip_retweets (if set to true, retweets are skipped, e.g. skip_retweets="true")
+
+Virtually every widget option is usable, more examples are coming in the next updates.
 
 = Reference =
 
@@ -86,6 +102,9 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.4.1 =
+* Added: "really_simple_twitter" shortcode
 
 = 2.4 =
 * Added: Twitter Follow @user button with text customization
