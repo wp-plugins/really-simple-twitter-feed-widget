@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.4.1
+Version: 2.4.2
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -71,6 +71,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'text',	'default' => __( 'Last Tweets', 'rstw' )			),
 			array(
 				'name'	=> 'title_icon',	'label'	=> __( 'Show Twitter icon on title', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false			),
+			array(
+				'name'	=> 'title_thumbnail',	'label'	=> __( 'Show account thumbnail on title', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => false			),
 			array(
 				'name'	=> 'link_title',	'label'	=> __( 'Link above Title with Twitter user', 'rstw' ),
@@ -143,11 +146,30 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		if ( $title != '') {
 			echo $before_title;
 			$title_icon = ($instance['title_icon']) ? '<img src="'.WP_PLUGIN_URL.'/'.basename(dirname(__FILE__)).'/twitter_small.png" alt="'.$title.'" title="'.$title.'" /> ' : '';
+			$title_thumb = '';
+			if ($instance['title_thumbnail']) {
+				$transient_name = 'twitter_thumb_'.$options['username'];
+				$twitter_thumb = get_transient($transient_name);
+				if ($twitter_thumb=='') {
+					if ($instance['consumer_key'] == '' or $instance['consumer_secret'] == '' or $instance['access_token'] == '' or $instance['access_token_secret'] == '') {
+						return __('Twitter Authentication data is incomplete','rstw');
+					} 
+					if (!$this->cb) {
+						$this->really_simple_twitter_codebird_set ($instance);
+					}
+					$user_data =  $this->cb->users_show(array('screen_name'=>$instance['username']));
+					$twitter_thumb = $user_data['profile_image_url'];
+					set_transient($transient_name, $twitter_thumb, 60*60*24); // 1 day
+				}
+				if ($twitter_thumb!='') {
+					$title_thumb = '<img src="'.$twitter_thumb.'" alt="'.$title.'" title="'.$title.'" class="really_simple_twitter_author" /> ';
+				}
+			}
 			if ( $instance['link_title'] === true ) {
 				$link_target = ($instance['link_target_blank']) ? ' target="_blank" ' : '';
-				echo '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link" '.$link_target.'>'. $title_icon . $title . '</a>';
+				echo '<a href="http://twitter.com/' . $instance['username'] . '" class="twitter_title_link" '.$link_target.'>'. $title_icon . $title_thumb . $title . '</a>';
 			} else {
-				echo $title_icon . $title;
+				echo $title_icon . $title_thumb . $title;
 			}
 			echo $after_title;
 		}
@@ -229,6 +251,19 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		}
 	}
 	
+	
+	public function really_simple_twitter_codebird_set ($options) {
+		if (!class_exists('Codebird')) {
+			require ('lib/codebird.php');
+		}
+		Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
+		$this->cb = Codebird::getInstance();	
+		$this->cb->setToken($options['access_token'], $options['access_token_secret']);
+		
+		// From Codebird documentation: For API methods returning multiple data (like statuses/home_timeline), you should cast the reply to array
+		$this->cb->setReturnFormat(CODEBIRD_RETURNFORMAT_ARRAY);
+	}
+	
 
 	// Display Twitter messages
 	public function really_simple_twitter_messages($options) {
@@ -244,16 +279,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		if ($options['consumer_key'] == '' or $options['consumer_secret'] == '' or $options['access_token'] == '' or $options['access_token_secret'] == '') {
 			return __('Twitter Authentication data is incomplete','rstw');
 		} 
-
-		if (!class_exists('Codebird')) {
-			require ('lib/codebird.php');
+		if (!$this->cb) {
+			$this->really_simple_twitter_codebird_set ($options);
 		}
-		Codebird::setConsumerKey($options['consumer_key'], $options['consumer_secret']); 
-		$this->cb = Codebird::getInstance();	
-		$this->cb->setToken($options['access_token'], $options['access_token_secret']);
-		
-		// From Codebird documentation: For API methods returning multiple data (like statuses/home_timeline), you should cast the reply to array
-		$this->cb->setReturnFormat(CODEBIRD_RETURNFORMAT_ARRAY);
 
 		// SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
 		$max_items_to_retrieve = $options['num'];
