@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.4.2
+Version: 2.4.3
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -147,7 +147,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			echo $before_title;
 			$title_icon = ($instance['title_icon']) ? '<img src="'.WP_PLUGIN_URL.'/'.basename(dirname(__FILE__)).'/twitter_small.png" alt="'.$title.'" title="'.$title.'" /> ' : '';
 			$title_thumb = '';
-			if ($instance['title_thumbnail']) {
+			if (isset($instance['title_thumbnail']) && $instance['title_thumbnail']) {
 				$transient_name = 'twitter_thumb_'.$options['username'];
 				$twitter_thumb = get_transient($transient_name);
 				if ($twitter_thumb=='') {
@@ -212,21 +212,21 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
 		foreach ($this->options as $val) {
 			if ($val['type']=='separator') {
-				if ($val['label']!='') {
+				if (isset($val['label']) && $val['label']!='') {
 					echo '<h3>'.$val['label'].'</h3>';
 				} else {
 					echo '<hr />';
 				}
-				if ($val['notes']!='') {
+				if (isset($val['notes']) && $val['notes']!='') {
 					echo '<div class="description">'.$val['notes'].'</div>';
 				}
-			} else if ($val['type']=='text') {
+			} else if (isset($val['type']) && $val['type']=='text') {
 				echo '
-					<input class="widefat" id="'.$this->get_field_id($val['name']).'"  name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr($instance[$val['name']]).'" />
+					<input class="widefat" id="'.$this->get_field_id($val['name']).'"  name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr(isset($instance[$val['name']]) ? $instance[$val['name']] : '').'" />
 					<label for="'.$this->get_field_id($val['name']).'">'.$val['label'].'</label>
 					<div class="rstw_clear"></div>';
-			} else if ($val['type']=='checkbox') {
-				$checked = ($instance[$val['name']]) ? 'checked="checked"' : '';
+			} else if (isset($val['type']) && $val['type']=='checkbox') {
+				$checked = (isset($instance[$val['name']]) && $instance[$val['name']]) ? 'checked="checked"' : '';
 				echo '
 					<div class="rstw_checkbox"><input id="'.$this->get_field_id($val['name']).'" name="'.$this->get_field_name($val['name']).'" type="checkbox" '.$checked.' /></div>
 					<label for="'.$this->get_field_id($val['name']).'">'.$val['label'].'</label>
@@ -270,6 +270,15 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 	
 		// CHECK OPTIONS
 
+		if (!isset($options['skip_retweets'] ) ) {
+			$options['skip_retweets'] = false;
+		}
+		if (!isset($options['thumbnail_retweets']) ) {
+			$options['thumbnail_retweets'] = false;
+		}
+		if (!isset($options['button_follow']) ) {
+			$options['button_follow'] = false;
+		}
 		if ($options['username'] == '') {
 			return __('Twitter username is not configured','rstw');
 		} 
@@ -279,7 +288,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		if ($options['consumer_key'] == '' or $options['consumer_secret'] == '' or $options['access_token'] == '' or $options['access_token_secret'] == '') {
 			return __('Twitter Authentication data is incomplete','rstw');
 		} 
-		if (!$this->cb) {
+		if (!isset($this->cb) ) {
 			$this->really_simple_twitter_codebird_set ($options);
 		}
 
@@ -405,6 +414,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
 		$i = 0;
 		foreach($twitter_data as $message) {
+      if (!is_array($message)) {
+        continue;
+      }
 
 			// CHECK THE NUMBER OF ITEMS SHOWN
 			if ($i>=$options['num']) {
@@ -414,6 +426,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			$msg = $message['text'];
 			
 			// RECOVER ORIGINAL MESSAGE FOR RETWEETS
+      if (!isset($message['retweeted_status']) ) {
+        $message['retweeted_status'] = array();
+      }
 			if (count($message['retweeted_status'])>0) {
 				$msg = 'RT @'.$message['retweeted_status']['user']['screen_name'].': '.$message['retweeted_status']['text'];
 
