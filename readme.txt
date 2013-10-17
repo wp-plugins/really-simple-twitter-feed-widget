@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.6.1
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -52,6 +52,24 @@ Do you like this plugin? Give a chance to our other works:
 * [Tilted Tag Cloud Widget](http://www.whiletrue.it/tilted-tag-cloud-widget-per-wordpress/ "Tilted Tag Cloud Widget")
 * [Reading Time](http://www.whiletrue.it/reading-time-for-wordpress/ "Reading Time")
 
+= Credits =
+
+The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
+
+The 1.2.3 release is based on the work of Frank Gregor.
+
+The 1.3.5 and 1.3.7 releases are based on the work of Jim Durand.
+
+Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - https://github.com/mynetx/codebird-php ) is used for Twitter OAuth Authentication.
+
+= Translators =
+
+* Branco, Slovak translation (WebHostingGeeks.com)
+* WhileTrue, Italian translation (www.whiletrue.it)
+* Inspirats, French translation (rysk-x.com)
+* Aleksandra Czuba, Polish translation (www.iwasindira.com)
+* Alexandre Janini, Brazilian Portuguese translation (www.asterisko.com.br)
+
 
 == Installation ==
 Best is to install directly from WordPress. If manual installation is required, please make sure to put all of the plugin files in a folder named `really-simple-twitter-widget` (not two nested folders) in the plugin directory, then activate the plugin through the `Plugins` menu in WordPress.
@@ -78,30 +96,14 @@ You can use some CSS rules like these:
 `.really_simple_twitter_widget img { margin-right :6px; float:left; border-radius:4px; }`
 
 
-== Credits ==
-
-The initial release of the plugin was based on previous work of Max Steel (Web Design Company, Pro Web Design Studios), which was based on Pownce for Wordpress widget.
-
-The 1.2.3 release is based on the work of Frank Gregor.
-
-The 1.3.5 and 1.3.7 releases are based on the work of Jim Durand.
-
-Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - https://github.com/mynetx/codebird-php ) is used for Twitter OAuth Authentication.
-
-= Translators =
-
-* Branco, Slovak translation (WebHostingGeeks.com)
-* WhileTrue, Italian translation (www.whiletrue.it)
-* Inspirats, French translation (rysk-x.com)
-* Aleksandra Czuba, Polish translation (www.iwasindira.com)
-* Alexandre Janini, Brazilian Portuguese translation (www.asterisko.com.br)
-
-
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.4.4 =
+* Changed: readme cleaning
 
 = 2.4.3 =
 * Changed: code cleaning
