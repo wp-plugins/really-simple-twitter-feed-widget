@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.4.5
+Version: 2.4.6
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -38,13 +38,13 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'text',	'default' => ''			),
 			array(
 				'name'	=> 'consumer_secret',	'label'	=> 'Consumer Secret',
-				'type'	=> 'text',	'default' => ''			),
+				'type'	=> 'password',	'default' => ''			),
 			array(
 				'name'	=> 'access_token',	'label'	=> 'Access Token',
 				'type'	=> 'text',	'default' => ''			),
 			array(
 				'name'	=> 'access_token_secret',	'label'	=> 'Access Token Secret',
-				'type'	=> 'text',	'default' => ''			),
+				'type'	=> 'password',	'default' => ''			),
 			array(
 				'label' => __( 'Twitter Data', 'rstw' ),
 				'type'	=> 'separator'			),
@@ -182,7 +182,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		$instance = $old_instance;
 		
 		foreach ($this->options as $val) {
-			if ($val['type']=='text') {
+			if ($val['type']=='text' || $val['type']=='password') {
 				$instance[$val['name']] = strip_tags($new_instance[$val['name']]);
 			} else if ($val['type']=='checkbox') {
 				$instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
@@ -220,9 +220,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				if (isset($val['notes']) && $val['notes']!='') {
 					echo '<div class="description">'.$val['notes'].'</div>';
 				}
-			} else if (isset($val['type']) && $val['type']=='text') {
+			} else if (isset($val['type']) && ($val['type']=='text' || $val['type']=='password')) {
 				echo '
-					<input class="widefat" id="'.$this->get_field_id($val['name']).'"  name="'.$this->get_field_name($val['name']).'" type="text" value="'.esc_attr(isset($instance[$val['name']]) ? $instance[$val['name']] : '').'" />
+					<input class="widefat" id="'.$this->get_field_id($val['name']).'"  name="'.$this->get_field_name($val['name']).'" type="'.$val['type'].'" value="'.esc_attr(isset($instance[$val['name']]) ? $instance[$val['name']] : '').'" />
 					<label for="'.$this->get_field_id($val['name']).'">'.$val['label'].'</label>
 					<div class="rstw_clear"></div>';
 			} else if (isset($val['type']) && $val['type']=='checkbox') {
@@ -237,7 +237,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			</div>
 			<style>
 			.rstw_form h3, .rstw_form .description { text-align:center; margin-top:1.2em; margin-bottom:0.6em; }
-			.rstw_form input[type="text"] { float:left; width:200px; }
+			.rstw_form input[type="text"], .rstw_form input[type="password"] { float:left; width:200px; }
 			.rstw_form .rstw_checkbox { float:left; width:200px; text-align:right; }
 			.rstw_form label { width:270px; padding-left:5px; }
 			.rstw_form .rstw_clear { clear:both; height:2px; margin-bottom:1px; border-bottom:1px solid #eee; }
