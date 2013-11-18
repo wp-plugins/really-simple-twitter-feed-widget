@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.4.6
+Version: 2.4.7
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -102,6 +102,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			array(
 				'name'	=> 'update',	'label'	=> __( 'Show timestamps', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => true			),
+			array(
+				'name'	=> 'date_format',	'label'	=> __( 'Timestamp format (e.g. M j )', 'rstw' ).' <a href="http://codex.wordpress.org/Formatting_Date_and_Time" target="_blank">?</a>',
+				'type'	=> 'text',	'default' => 'M j'			),
 			array(
 				'name'	=> 'thumbnail',	'label'	=> __( 'Include thumbnail before tweets', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => false			),			
@@ -278,6 +281,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		}
 		if (!isset($options['button_follow']) ) {
 			$options['button_follow'] = false;
+		}
+		if (!isset($options['date_format']) ) {
+			$options['date_format'] = 'M j';
 		}
 		if ($options['username'] == '') {
 			return __('Twitter username is not configured','rstw');
@@ -484,7 +490,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 		
 			if($options['update']) {				
 				$time = strtotime($message['created_at']);
-				$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date(__('M d', 'rstw'), $time);
+				$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date($options['date_format'], $time);
 				$out .= '<span class="rstw_comma">,</span> <span class="twitter-timestamp" title="' . date(__('Y/m/d H:i', 'rstw'), $time) . '">' . $h_time . '</span>';
 			}          
                   

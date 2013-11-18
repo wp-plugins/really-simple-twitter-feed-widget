@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.7.1
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -102,6 +102,9 @@ You can use some CSS rules like these:
 
 == Changelog ==
 
+= 2.4.7 =
+* Added: Timestamp format option
+
 = 2.4.6 =
 * Fixed: Secret fields masked
 
@@ -180,60 +183,24 @@ You can use some CSS rules like these:
 
 = 1.3.17 =
 * Added: Polish translation by Aleksandra Czuba (www.iwasindira.com)
-
-= 1.3.16 =
 * Added: French translation by Inspirats (rysk-x.com)
-
-= 1.3.15 =
 * Added: Slovak translation by Branco (WebHostingGeeks.com)
-
-= 1.3.14 =
-* Fixed: widget_title filter
-
-= 1.3.13 =
-* Fixed: storing feed error 
-
-= 1.3.12 =
-* Changed: more feed error catching 
-
-= 1.3.11 =
-* Added: more debug info
-* Fixed: feed error catching 
-
-= 1.3.10 =
 * Added: show debug info option
-
-= 1.3.9.1 =
-* Fixed: the Twitter icon wasn't properly shown (AKA never commit on Saturday!)
-
-= 1.3.9 =
 * Added: optional Twitter icon near the widget title
+* Added: span wrapper element around the comma before the timestamp (class: rstw_comma), for easier design customization
+* Added: option to customize text on the user link below the list of tweets
+* Changed: more feed error catching 
 * Changed: screenshots moved outside, reducing the size of the plugin and allowing for faster updates
 * Changed: cleaner options UI
-
-= 1.3.8 =
 * Changed: now the "Create links on new window/tab" option affects all kinds of link
 * Changed: different regular expression for hashtag recognition
-
-= 1.3.7 =
-* Added: span wrapper element around the comma before the timestamp (class: rstw_comma), for easier design customization
-* Fixed: better caching errors control (work by Jim Durand)
-
-= 1.3.6 =
-* Fixed: avoid php warning on preg_replace function (php 5.3.5 bug)
-
-= 1.3.5 =
-* Fixed: better caching errors control (work by Jim Durand) 
-
-= 1.3.4 =
 * Changed: better caching control, allowing two widget with same username and different number of messages
 * Changed: simpler widget name
-
-= 1.3.3 =
+* Fixed: widget_title filter
+* Fixed: storing feed error 
+* Fixed: better caching errors control (work by Jim Durand)
+* Fixed: avoid php warning on preg_replace function (php 5.3.5 bug)
 * Fixed: error checking in the json request
-
-= 1.3.2 =
-* Added: option to customize text on the user link below the list of tweets
 * Fixed: now checks for errors when retrieving data from the Twitter API
 
 = 1.3.1 =
