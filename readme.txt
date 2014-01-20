@@ -99,6 +99,7 @@ You can use some CSS rules like these:
 
 This is the complete option list. The boolean options can be set writing "true" or "false" as values.
 
+
 ATTRIBUTE	| DESCRIPTION
 TWITTER AUTHENTICATION | 
 consumer_key	| Consumer Key
