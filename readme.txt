@@ -295,11 +295,6 @@ This is the complete option list. The boolean options can be set writing "true" 
 * Changed: a bit of UI (work by Frank Gregor)
 * Added: switch for setting on/off a link of the title to the twitter user (work by Frank Gregor)
 * Added: German translation (work by Frank Gregor)
-
-= 1.2.2 =
-* Fixed: Broken 1.2.1 regular expression cleaning
-
-= 1.2.1 =
 * Fixed: Better hashtag handling
 
 = 1.2.0 =
@@ -358,9 +353,6 @@ A "saturday" bug appeared in the 1.3.9 release is fixed (the Twitter icon wasn't
 
 = 1.3.1 =
 A blocking bug appeared in the 1.3.0 release is fixed
-
-= 1.2.2 =
-A blocking bug appeared in the 1.2.1 release is fixed
 
 = 1.2.0 =
 Due to the FB Widget API adoption, existing widgets need to be recreated
