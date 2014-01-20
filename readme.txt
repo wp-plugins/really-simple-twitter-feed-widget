@@ -155,7 +155,7 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 *hyperlinks*	: Find and show hyperlinks (value: true or false)
 
-*replace_link_text*	: Replace hyperlinks text with fixed text (e.g. "-–>")
+*replace_link_text*	: Replace hyperlinks text with fixed text (e.g. "-->")
 
 *twitter_users*	: Find Replies in Tweets (value: true or false)
 
