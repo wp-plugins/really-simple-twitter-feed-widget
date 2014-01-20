@@ -99,42 +99,75 @@ You can use some CSS rules like these:
 
 This is the complete option list. The boolean options can be set writing "true" or "false" as values.
 
-ATTRIBUTE	| DESCRIPTION
-TWITTER AUTHENTICATION | 
-consumer_key	| Consumer Key
-consumer_secret	| Consumer Secret
-access_token	| Access Token
-access_token_secret	| Access Token Secret
-TWITTER DATA | 
-username	| Twitter Username
-num	| Show # of Tweets
-skip_text	| Skip tweets containing this text
-skip_replies	| Skip replies (value: true or false)
-skip_retweets	| Skip retweets (value: true or false)
-WIDGET TITLE | 
-title	| Title
-title_icon	| Show Twitter icon on title (value: true or false)
-title_thumbnail	| Show account thumbnail on title (value: true or false)
-link_title	| Link above Title with Twitter user (value: true or false)
-WIDGET FOOTER
-link_user	| Show a link to the Twitter user profile (value: true or false)
-link_user_text	| Link text
-button_follow	| Show a Twitter Follow Me button (value: true or false)
-button_follow_text	| Button text
-ITEMS AND LINKS | 
-linked	| Show this linked text at the end of each Tweet
-update	| Show timestamps (value: true or false)
-date_format	| Timestamp format (e.g. M j ) ?
-thumbnail	| Include thumbnail before tweets (value: true or false)
-thumbnail_retweets | Use author thumb for retweets (value: true or false)
-hyperlinks	| Find and show hyperlinks (value: true or false)
-replace_link_text	| Replace hyperlinks text with fixed text (e.g. “–>”)
-twitter_users	| Find Replies in Tweets (value: true or false)
-link_target_blank	| Create links on new window / tab (value: true or false)
-DEBUG |
-debug |	Show debug info (value: true or false)
-erase_cached_data	| Erase cached data (value: true or false)
-encode_utf8	| Force UTF8 Encode (value: true or false)
+*TWITTER AUTHENTICATION* 
+
+*consumer_key*	: Consumer Key
+
+*consumer_secret*	: Consumer Secret
+
+*access_token*	: Access Token
+
+*access_token_secret*	: Access Token Secret
+
+*TWITTER DATA* 
+
+*username*	: Twitter Username
+
+*num*	: Show # of Tweets
+
+*skip_text*	: Skip tweets containing this text
+
+*skip_replies*	: Skip replies (value: true or false)
+
+*skip_retweets*	: Skip retweets (value: true or false)
+
+*WIDGET TITLE*
+
+*title*	: Title
+
+*title_icon*	: Show Twitter icon on title (value: true or false)
+
+*title_thumbnail*	: Show account thumbnail on title (value: true or false)
+
+*link_title*	: Link above Title with Twitter user (value: true or false)
+
+*WIDGET FOOTER*
+
+*link_user*	: Show a link to the Twitter user profile (value: true or false)
+
+*link_user_text*	: Link text
+
+*button_follow*	: Show a Twitter Follow Me button (value: true or false)
+
+*button_follow_text*	: Button text
+
+*ITEMS AND LINKS*
+
+*linked*	: Show this linked text at the end of each Tweet
+
+*update*	: Show timestamps (value: true or false)
+
+*date_format*	: Timestamp format (e.g. M j ) ?
+
+*thumbnail*	: Include thumbnail before tweets (value: true or false)
+
+*thumbnail_retweets* : Use author thumb for retweets (value: true or false)
+
+*hyperlinks*	: Find and show hyperlinks (value: true or false)
+
+*replace_link_text*	: Replace hyperlinks text with fixed text (e.g. "-–>")
+
+*twitter_users*	: Find Replies in Tweets (value: true or false)
+
+*link_target_blank*	: Create links on new window / tab (value: true or false)
+
+*DEBUG*
+
+*debug* :	Show debug info (value: true or false)
+
+*erase_cached_data*	: Erase cached data (value: true or false)
+
+*encode_utf8*	: Force UTF8 Encode (value: true or false)
 
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
@@ -213,19 +246,13 @@ encode_utf8	| Force UTF8 Encode (value: true or false)
 * Changed: Cache timeout lowered from 30 to 10 minutes
 
 = 2.0.4 =
+* Added: Erase cached data option (to be used only for a few minutes, when having issues)
 * Changed: More reasonable options display
 * Changed: Only show Twitter API debug status when getting actual Twitter data
+* Changed: If widget title is not set, don't show the title box
 * Fixed: Twitter object format causing PHP warnings
-
-= 2.0.3 =
-* Added: Erase cached data option (to be used only for a few minutes, when having issues)
-
-= 2.0.2 =
 * Fixed: if Twitter data is empty, don't cache it
 * Fixed: minor warning on empty Twitter data
-
-= 2.0.1 =
-* Changed: If widget title is not set, don't show the title box
 * Fixed: minor notice on Twitter status timeout
 
 = 2.0 =
