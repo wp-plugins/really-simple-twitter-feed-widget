@@ -214,19 +214,13 @@ encode_utf8	| Force UTF8 Encode (value: true or false)
 * Changed: Cache timeout lowered from 30 to 10 minutes
 
 = 2.0.4 =
+* Added: Erase cached data option (to be used only for a few minutes, when having issues)
 * Changed: More reasonable options display
 * Changed: Only show Twitter API debug status when getting actual Twitter data
+* Changed: If widget title is not set, don't show the title box
 * Fixed: Twitter object format causing PHP warnings
-
-= 2.0.3 =
-* Added: Erase cached data option (to be used only for a few minutes, when having issues)
-
-= 2.0.2 =
 * Fixed: if Twitter data is empty, don't cache it
 * Fixed: minor warning on empty Twitter data
-
-= 2.0.1 =
-* Changed: If widget title is not set, don't show the title box
 * Fixed: minor notice on Twitter status timeout
 
 = 2.0 =
