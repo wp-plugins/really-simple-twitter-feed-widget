@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
 Tested up to: 3.8
-Stable tag: 2.4.10
+Stable tag: 2.4.11
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -39,7 +39,7 @@ You can specify other optional attributes, e.g.:
 * num (number of tweets to show, e.g. num="10")
 * skip_retweets (if set to true, retweets are skipped, e.g. skip_retweets="true")
 
-Virtually every widget option is usable, more examples are coming in the next updates.
+The full list of available options is available in the plugin FAQ.
 
 = Reference =
 
@@ -95,12 +95,55 @@ You can use some CSS rules like these:
 `.really_simple_twitter_widget li  { margin-bottom:6px; clear:both; list-style:none;   }`
 `.really_simple_twitter_widget img { margin-right :6px; float:left; border-radius:4px; }`
 
+= What options are available for the shortcode? =
+
+This is the complete option list. The boolean options can be set writing "true" or "false" as values.
+
+ATTRIBUTE	| DESCRIPTION
+TWITTER AUTHENTICATION | 
+consumer_key	| Consumer Key
+consumer_secret	| Consumer Secret
+access_token	| Access Token
+access_token_secret	| Access Token Secret
+TWITTER DATA | 
+username	| Twitter Username
+num	| Show # of Tweets
+skip_text	| Skip tweets containing this text
+skip_replies	| Skip replies (value: true or false)
+skip_retweets	| Skip retweets (value: true or false)
+WIDGET TITLE | 
+title	| Title
+title_icon	| Show Twitter icon on title (value: true or false)
+title_thumbnail	| Show account thumbnail on title (value: true or false)
+link_title	| Link above Title with Twitter user (value: true or false)
+WIDGET FOOTER
+link_user	| Show a link to the Twitter user profile (value: true or false)
+link_user_text	| Link text
+button_follow	| Show a Twitter Follow Me button (value: true or false)
+button_follow_text	| Button text
+ITEMS AND LINKS | 
+linked	| Show this linked text at the end of each Tweet
+update	| Show timestamps (value: true or false)
+date_format	| Timestamp format (e.g. M j ) ?
+thumbnail	| Include thumbnail before tweets (value: true or false)
+thumbnail_retweets | Use author thumb for retweets (value: true or false)
+hyperlinks	| Find and show hyperlinks (value: true or false)
+replace_link_text	| Replace hyperlinks text with fixed text (e.g. “–>”)
+twitter_users	| Find Replies in Tweets (value: true or false)
+link_target_blank	| Create links on new window / tab (value: true or false)
+DEBUG |
+debug |	Show debug info (value: true or false)
+erase_cached_data	| Erase cached data (value: true or false)
+encode_utf8	| Force UTF8 Encode (value: true or false)
 
 == Screenshots ==
 1. Sample content, using default options (e.g. no active links)  
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.4.11 =
+* Added: Shortcode options list
 
 = 2.4.10 =
 * Added: Donate link
