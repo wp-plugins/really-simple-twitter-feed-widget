@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
 Requires at least: 2.9+
-Tested up to: 3.8
-Stable tag: 2.4.11
+Tested up to: 3.8.1
+Stable tag: 2.5
 
 Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
 
@@ -145,10 +145,6 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 *linked*	: Show this linked text at the end of each Tweet
 
-*update*	: Show timestamps (value: true or false)
-
-*date_format*	: Timestamp format (e.g. M j ) ?
-
 *thumbnail*	: Include thumbnail before tweets (value: true or false)
 
 *thumbnail_retweets* : Use author thumb for retweets (value: true or false)
@@ -160,6 +156,14 @@ This is the complete option list. The boolean options can be set writing "true" 
 *twitter_users*	: Find Replies in Tweets (value: true or false)
 
 *link_target_blank*	: Create links on new window / tab (value: true or false)
+
+*TIMESTAMP*
+
+*update*	: Show timestamps (value: true or false)
+
+*date_link*	: Link timestamp to the actual tweet (value: true or false)
+
+*date_format*	: Timestamp format (e.g. M j )
 
 *DEBUG*
 
@@ -174,6 +178,11 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5 =
+* Added: Option to link timestamp to the actual tweet
+* Changed: New button to show/hide advanced options
+* Changed: Layout cleaning
 
 = 2.4.11 =
 * Added: Shortcode options list
