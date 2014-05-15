@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.1
+Version: 2.5.2
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -505,7 +505,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\" ".$link_target.">@$2</a>$3 ", $msg);
 			}
           					
-			$link = 'http://twitter.com/#!/'.$options['username'].'/status/'.$message['id_str'];
+			$link = 'http://twitter.com/'.$options['username'].'/status/'.$message['id_str'];
 			if($options['linked'] == 'all')  { 
 				$msg = '<a href="'.$link.'" class="twitter-link" '.$link_target.'>'.$msg.'</a>';  // Puts a link to the status of each tweet 
 			} else if ($options['linked'] != '') {
@@ -517,7 +517,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				$time = strtotime($message['created_at']);
 				$h_time = ( ( abs( time() - $time) ) < 86400 ) ? sprintf( __('%s ago', 'rstw'), human_time_diff( $time )) : date($options['date_format'], $time);
         if ($options['date_link']) {
-          $h_time = '<a href="https://twitter.com/'.$options['username'].'/status/'.$message['id'].'" target="_blank">'. $h_time . '</a>';
+          $h_time = '<a href="'.$link.'" target="_blank">'. $h_time . '</a>';
         }
 				$out .= '<span class="rstw_comma">,</span> <span class="twitter-timestamp" title="' . date(__('Y/m/d H:i', 'rstw'), $time) . '">' . $h_time . '</span>';
 			}          
