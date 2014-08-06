@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.3
+Version: 2.5.4
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -62,6 +62,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				'type'	=> 'checkbox',	'default' => true	),
 			array(
 				'name'	=> 'skip_retweets',		'label'	=> __( 'Skip retweets', 'rstw' ),
+				'type'	=> 'checkbox',	'default' => false	),
+			array(
+				'name'	=> 'show_favorites',		'label'	=> __( 'Show instead the account Favorites feed', 'rstw' ),
 				'type'	=> 'checkbox',	'default' => false	),
 			array(
 				'code' => '<h2>'.__( 'Advanced Options', 'rstw' ).' 
@@ -344,12 +347,19 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 			delete_option($transient_name.'_valid');
 			
 			try {
-				$twitter_data =  $this->cb->statuses_userTimeline(array(
-							'screen_name'=>$options['username'], 
-							'count'=>$max_items_to_retrieve,
-							'exclude_replies'=>$options['skip_replies'],
-							'include_rts'=>(!$options['skip_retweets'])
-					));
+        if (isset($options['show_favorites']) && $options['show_favorites']) {
+  				$twitter_data =  $this->cb->favorites_list(array(
+  							'screen_name'=>$options['username'], 
+  							'count'=>$max_items_to_retrieve,
+  					));
+        } else {
+          $twitter_data =  $this->cb->statuses_userTimeline(array(
+  							'screen_name'=>$options['username'], 
+  							'count'=>$max_items_to_retrieve,
+  							'exclude_replies'=>$options['skip_replies'],
+  							'include_rts'=>(!$options['skip_retweets'])
+  					));
+        }
 			} catch (Exception $e) {
 				$this->debug($options, $e->getMessage().'<br />');
 				return __('Error retrieving tweets','rstw'); 

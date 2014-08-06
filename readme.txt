@@ -1,17 +1,16 @@
 === Really Simple Twitter Feed Widget ===
 Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
-Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth
+Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 3.9.1
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 
-Shows the latest tweets from a Twitter account in a sidebar widget. Twitter API 1.1 ready.
+Shows the latest tweets from a Twitter account in a sidebar widget.
 
 == Description ==
 This plugin displays the latest posts from a Twitter account in a sidebar widget. 
-Twitter API 1.1 ready, with easy customization of number of posts shown and replies detection.
-
+Easy customization of style, replies, retweets, links, dates, thumbnails and a lot more.
 
 The plugin is based on Twitter API version 1.1. 
 In order to use it, you have to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
@@ -23,7 +22,7 @@ Finally, enter all the Authorization string in the widget options box, along wit
 You can use the same Authorization strings for several widgets and multiple website. 
 Just remember to store them in a safe place!
 
-You also need CURL and OPENSSL extensions enabled in your PHP environment.
+You also need CURL and OPENSSL extensions enabled in your PHP environment (don't worry, almost every hosting service provides that).
 
 = Shortcode =
 
@@ -178,6 +177,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.4 =
+* Added: Option to show the account's Favorites feed instead of the usual tweets timeline
 
 = 2.5.3 =
 * Fixed: Twitter thumbnail transient cleaning
