@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.0
-Stable tag: 2.5.4
+Stable tag: 2.5.5
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -178,6 +178,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 == Changelog ==
 
+= 2.5.5 =
+* Fixed: Hashtag recognition with foreign characters
+
 = 2.5.4 =
 * Added: Option to show the account's Favorites feed instead of the usual tweets timeline
 
@@ -196,28 +199,16 @@ This is the complete option list. The boolean options can be set writing "true" 
 * Changed: Layout cleaning
 
 = 2.4.11 =
+* Added: Twitter Follow @user button with text customization
 * Added: Shortcode options list
 * Added: Donate link
 * Added: "really_simple_twitter" shortcode
 * Added: account thumbnail option
-* Changed: code cleaning
 * Added: Timestamp format option
-* Fixed: Layout cleaning
+* Changed: more compact and clean settings ui
+* Changed: layout & code cleaning
 * Fixed: Increased number of retrieved posts when the "skip text" option is enabled
 * Fixed: Secret fields masked
-
-= 2.4 =
-* Added: Twitter Follow @user button with text customization
-* Changed: more compact and clean settings ui
-
-= 2.3.99 =
-* Fixed: revert to older Codebird version (PHP < 5.3 compatible)
-
-= 2.3.1.2 =
-* Changed: updated Codebird library
-* Changed: better error handling 
-* Fixed: previous Codebird version now available when running PHP < 5.3 
-* Fixed: class_exists check is now namespace safe
 
 = 2.3 =
 * Changed: updated timestamp function, following the current Twitter guidelines 
@@ -230,12 +221,10 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 = 2.1.1 =
 * Added: Replace links with fixed text option
-* Added: Brazilian Portuguese translation by Alexandre Janini (www.asterisko.com.br)
-
-= 2.1 =
 * Added: Show thumbnail option
 * Added: Limit to 200 tweets as stated in Twitter API
 * Added: Skip replies option, active by default for new widgets
+* Added: Brazilian Portuguese translation by Alexandre Janini (www.asterisko.com.br)
 * Changed: Cache timeout lowered from 30 to 10 minutes
 
 = 2.0.4 =
@@ -304,18 +293,6 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 == Upgrade Notice ==
 
-= 2.3.99 =
-Revert to old Codebird version, users running PHP < 5.3 MUST upgrade (we apologize)
-
-= 2.3.1.2 =
-Previous Codebird version now available, users running PHP < 5.3 should upgrade 
-
-= 2.3.1.1 =
-The class_exists check is now namespace safe, users with multiple Codebird instances should upgrade
-
-= 2.3.1 =
-When using this release, PHP >= 5.3 is needed (required by the latest Codebird Twitter API), users running PHP < 5.3 should upgrade at least to the 2.3.1.2 plugin release.
-
 = 2.0 =
 This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
 The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
@@ -328,17 +305,8 @@ You can use the same Authorization strings for several widgets and multiple webs
 Just remember to store them in a safe place!
 You also need to enable the CURL and OPENSSL extensions in your PHP environment.
 
-= 1.3.13 =
-A blocking bug appeared in the 1.3.12 release is fixed
-
-= 1.3.9.1 =
-A "saturday" bug appeared in the 1.3.9 release is fixed (the Twitter icon wasn't properly shown)
-
 = 1.3.1 =
 A blocking bug appeared in the 1.3.0 release is fixed
-
-= 1.2.0 =
-Due to the FB Widget API adoption, existing widgets need to be recreated
 
 = 1.0.0 =
 Initial release

@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.4
+Version: 2.5.5
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -506,10 +506,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 				}
 				// match name@address
 				$msg = preg_replace('/\b([a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]*\@[a-zA-Z][a-zA-Z0-9\_\.\-]*[a-zA-Z]{2,6})\b/i',"<a href=\"mailto://$1\" class=\"twitter-link\" ".$link_target.">$1</a>", $msg);
-				//NEW mach #trendingtopics
+				//OLD mach #trendingtopics
 				//$msg = preg_replace('/#([\w\pL-.,:>]+)/iu', '<a href="http://twitter.com/#!/search/\1" class="twitter-link">#\1</a>', $msg);
-				//NEWER mach #trendingtopics
-				$msg = preg_replace('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', '\1<a href="http://twitter.com/#!/search/%23\2" class="twitter-link" '.$link_target.'>#\2</a>', $msg);
+				//$msg = preg_replace('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', '\1<a href="http://twitter.com/#!/search/%23\2" class="twitter-link" '.$link_target.'>#\2</a>', $msg);
+				//NEW mach #trendingtopics
+				$msg = preg_replace('/(^|\s)#([\w\pL.]*[\pLa-zA-Z_]+[\w\pL.]*)/iu', '\1<a href="http://twitter.com/#!/search?q=%23\2" class="twitter-link" '.$link_target.'>#\2</a>', $msg);
 			}
 			if ($options['twitter_users'])  { 
 				$msg = preg_replace('/([\.|\,|\:|\¡|\¿|\>|\{|\(]?)@{1}(\w*)([\.|\,|\:|\!|\?|\>|\}|\)]?)\s/i', "$1<a href=\"http://twitter.com/$2\" class=\"twitter-user\" ".$link_target.">@$2</a>$3 ", $msg);
