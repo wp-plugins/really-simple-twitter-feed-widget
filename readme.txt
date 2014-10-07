@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.0
-Stable tag: 2.5.5
+Stable tag: 2.5.6
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -138,8 +138,6 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 *button_follow*	: Show a Twitter Follow Me button (value: true or false)
 
-*button_follow_text*	: Button text
-
 *ITEMS AND LINKS*
 
 *linked*	: Show this linked text at the end of each Tweet
@@ -177,6 +175,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.6 =
+* Changed: Option "button_follow_text" removed (no more supported by Twitter)
 
 = 2.5.5 =
 * Fixed: Hashtag recognition with foreign characters
@@ -295,7 +296,7 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 = 2.0 =
 This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
-The upcoming 2.0 plugin release, based on the new Twitter API version 1.1, requires you
+The 2.0 plugin release, based on the Twitter API version 1.1, requires you
 to create a personal Twitter Application on the [dev.twitter.com](https://dev.twitter.com/apps "dev.twitter.com") website.
 Within your Application, Twitter provides two strings: the Consumer Key and the Consumer Secret.
 You also need two other strings, the Access Token and the Access Token Secret, that you can get
@@ -304,9 +305,6 @@ Finally, enter all the Authorization string in the widget options box, along wit
 You can use the same Authorization strings for several widgets and multiple website. 
 Just remember to store them in a safe place!
 You also need to enable the CURL and OPENSSL extensions in your PHP environment.
-
-= 1.3.1 =
-A blocking bug appeared in the 1.3.0 release is fixed
 
 = 1.0.0 =
 Initial release
