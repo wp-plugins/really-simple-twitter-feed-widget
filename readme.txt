@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.0
-Stable tag: 2.5.6
+Stable tag: 2.5.7
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -94,6 +94,14 @@ You can use some CSS rules like these:
 `.really_simple_twitter_widget li  { margin-bottom:6px; clear:both; list-style:none;   }`
 `.really_simple_twitter_widget img { margin-right :6px; float:left; border-radius:4px; }`
 
+= What filters are available? =
+
+* The "rstw_link_user" filter applies to the link to the Twitter user profile
+* The "rstw_button_follow" filter applies to the Twitter "Follow Me" button
+* The "rstw_output" filter applies to the final widget frontend output
+
+All the filters are provided with the plugin's complete array of options.
+
 = What options are available for the shortcode? =
 
 This is the complete option list. The boolean options can be set writing "true" or "false" as values.
@@ -136,7 +144,7 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 *link_user_text*	: Link text
 
-*button_follow*	: Show a Twitter Follow Me button (value: true or false)
+*button_follow*	: Show a Twitter "Follow Me" button (value: true or false)
 
 *ITEMS AND LINKS*
 
@@ -175,6 +183,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.7 =
+* Added: SUPER basic "rstw_link_user", "rstw_button_follow" and "rstw_output" filters
 
 = 2.5.6 =
 * Changed: Option "button_follow_text" removed (no more supported by Twitter)
