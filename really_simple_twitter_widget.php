@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.8
+Version: 2.5.9
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -171,7 +171,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         $transient_name = 'twitter_thumb_'.$instance['username'];
         $twitter_thumb = get_transient($transient_name);
         if ($twitter_thumb=='') {
-          if ($instance['consumer_key'] == '' or $instance['consumer_secret'] == '' or $instance['access_token'] == '' or $instance['access_token_secret'] == '') {
+          if ($instance['consumer_key'] == '' || $instance['consumer_secret'] == '' || $instance['access_token'] == '' || $instance['access_token_secret'] == '') {
             return __('Twitter Authentication data is incomplete','rstw');
           } 
           if (!$this->cb) {
@@ -319,10 +319,10 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     if ($options['username'] == '') {
       return __('Twitter username is not configured','rstw');
     } 
-    if (!is_numeric($options['num']) or $options['num']<=0) {
+    if (!is_numeric($options['num']) || $options['num'] <= 0) {
       return __('Number of tweets is not valid','rstw');
     }
-    if ($options['consumer_key'] == '' or $options['consumer_secret'] == '' or $options['access_token'] == '' or $options['access_token_secret'] == '') {
+    if ($options['consumer_key'] == '' || $options['consumer_secret'] == '' || $options['access_token'] == '' || $options['access_token_secret'] == '') {
       return __('Twitter Authentication data is incomplete','rstw');
     } 
     if (!isset($this->cb) ) {
@@ -331,7 +331,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
     // SET THE NUMBER OF ITEMS TO RETRIEVE - IF "SKIP TEXT" IS ACTIVE, GET MORE ITEMS
     $max_items_to_retrieve = $options['num'];
-    if ($options['skip_text']!='' or $options['skip_replies'] or $options['skip_retweets']) {
+    if ($options['skip_text']!='' || $options['skip_replies'] || $options['skip_retweets']) {
       $max_items_to_retrieve *= 4;
     }
     // TWITTER API GIVES MAX 200 TWEETS PER REQUEST
@@ -380,18 +380,19 @@ class ReallySimpleTwitterWidget extends WP_Widget {
       $twitter_status = get_transient($transient_name.'_status');
     
       // Twitter Status
-      if(!$twitter_status || !$twitter_data) {
+      if(!$twitter_status || !isset($twitter_status['resources']) || !$twitter_data) {
+        $this->debug($options, 'Retrieving API rate limit');
         try {
           $twitter_status = $this->cb->application_rateLimitStatus();
           set_transient($transient_name."_status", $twitter_status, $error_timeout);
         } catch (Exception $e) { 
-          $this->debug($options, 'Error retrieving twitter rate limit');
+          $this->debug($options, 'Error retrieving API rate limit');
         }
       }
     
       // Tweets
 
-      if (empty($twitter_data) or count($twitter_data)<1 or isset($twitter_data['errors'])) {
+      if (empty($twitter_data) || count($twitter_data)<1 || isset($twitter_data['errors'])) {
         $calls_limit   = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['limit'];
         $remaining     = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['remaining'];
         $reset_seconds = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['reset'] - time();
@@ -399,7 +400,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         $this->debug($options, 'Fetching data from Twitter');
         $this->debug($options, 'Fetching '.$max_items_to_retrieve.' items, '.$remaining.' of '.$calls_limit.' calls left, reset in '.$reset_seconds.'s');
 
-        if($remaining <= 7 and $reset_seconds >0) {
+        if($remaining <= 7 && $reset_seconds > 0) {
             $timeout       = $reset_seconds;
             $error_timeout = $reset_seconds;
         }
@@ -413,7 +414,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
             ));
         } catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
-        if(!isset($twitter_data['errors']) and (count($twitter_data) >= 1) ) {
+        if(!isset($twitter_data['errors']) || (count($twitter_data) >= 1) ) {
             set_transient($transient_name, $twitter_data, $timeout);
             update_option($transient_name."_valid", $twitter_data);
         } else {
@@ -425,34 +426,34 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         }
       } else {
         $this->debug($options, 'Using cached Twitter data');
-
-        if(isset($twitter_data['errors'])) {
-          $this->debug($options, 'Twitter cache error: '.$twitter_data['errors'][0]['message']);
-        }
       }
     
-      if (empty($twitter_data)) {
+      if (isset($twitter_data['errors'])) {
+        // STORE ERROR FOR DISPLAY
+        $error_code    = (isset($twitter_data['errors'][0]['code']   )) ? $twitter_data['errors'][0]['code']    : '';
+        $error_message = (isset($twitter_data['errors'][0]['message'])) ? $twitter_data['errors'][0]['message'] : '';
+        if ($error_code != '' || $error_message != '') {
+          $this->debug($options, 'Twitter error ['.$error_code.'] '.$error_message);
+        } else {
+          $this->debug($options, 'Twitter error: '.print_r($twitter_data['errors'], true));
+        }
+        if ($error_code == '32') {
+          $this->debug($options, 'Twitter API authentication error: try to regenerate your API access token');
+        }
+        $this->debug($options, 'Twitter username: '.$options['username']);
+      }
+      
+      if (empty($twitter_data) || isset($twitter_data['errors'])) {
         $this->debug($options, 'Twitter data is empty, retrieving Safe Cache');
         $twitter_data = get_option($transient_name."_valid");
         if (empty($twitter_data)) {
           $this->debug($options, 'Safe Cache is also empty');
-          return __('No public tweets','rstw');
-        }
-      }
-
-      if (isset($twitter_data['errors'])) {
-        // STORE ERROR FOR DISPLAY
-        $twitter_error = $twitter_data['errors'];
-          if(false === ($twitter_data = get_option($transient_name."_valid"))) {
-            $this->debug($options, 'Twitter error ['.$twitter_error[0]['code'].']: '.$twitter_error[0]['message']);
-            $this->debug($options, 'Twitter username: '.$options['username']);
-            return __('Unable to get tweets','rstw');
         }
       }
     }
 
     if (!is_array($twitter_data) || empty($twitter_data) || count($twitter_data)<1) {
-        return __('No public tweets','rstw');
+        return __('Unable to get tweets','rstw');
     }
     $link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
     
@@ -487,7 +488,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
       if ($msg=='') {
         continue;
       }
-      if ($options['skip_text']!='' and strpos($msg, $options['skip_text'])!==false) {
+      if ($options['skip_text']!='' && strpos($msg, $options['skip_text'])!==false) {
         continue;
       }
       if($options['encode_utf8']) $msg = utf8_encode($msg);
@@ -495,7 +496,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
       $out .= '<li>';
       
       // TODO: LINK
-      if ($options['thumbnail'] and $message['user']['profile_image_url_https']!='') {
+      if ($options['thumbnail'] && $message['user']['profile_image_url_https']!='') {
         $out .= '<img src="'.$message['user']['profile_image_url_https'].'" />';
       }
       if ($options['hyperlinks']) {
@@ -577,10 +578,10 @@ function really_simple_twitter_shortcode ($atts) {
 
   // CLEAN CHECKBOX BOOLEAN VALUES
   foreach ($rstw->options as $val) {
-    if ($val['type']=='checkbox' and $atts[$val['name']]==="true") {
+    if ($val['type']=='checkbox' && $atts[$val['name']]==="true") {
       $atts[$val['name']] = true;
     }
-    if ($val['type']=='checkbox' and $atts[$val['name']]==="false") {
+    if ($val['type']=='checkbox' && $atts[$val['name']]==="false") {
       $atts[$val['name']] = false;
     }
   }
