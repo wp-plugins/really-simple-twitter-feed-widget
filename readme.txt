@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.0
-Stable tag: 2.5.9
+Stable tag: 2.5.10
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -184,11 +184,15 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 == Changelog ==
 
+= 2.5.10 =
+* Changed: Improved Debug info 
+* Fixed: Improved local cache
+
 = 2.5.9 =
-* Changed: improved Debug info 
+* Changed: Improved Debug info 
 
 = 2.5.8 =
-* Changed: improved Debug info 
+* Changed: Improved Debug info 
 
 = 2.5.7 =
 * Added: SUPER basic "rstw_link_user", "rstw_button_follow" and "rstw_output" filters

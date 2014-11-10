@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.9
+Version: 2.5.10
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -24,10 +24,10 @@ Author URI: http://www.whiletrue.it/
 class ReallySimpleTwitterWidget extends WP_Widget {
   private /** @type {string} */ $languagePath;
 
-    /** constructor */
-    function ReallySimpleTwitterWidget() {
+  /** constructor */
+  function ReallySimpleTwitterWidget() {
     $this->languagePath = basename(dirname(__FILE__)).'/languages';
-        load_plugin_textdomain('rstw', 'false', $this->languagePath);
+    load_plugin_textdomain('rstw', 'false', $this->languagePath);
 
     $this->options = array(
       array(
@@ -154,12 +154,12 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         'type'  => 'donate'      ),
     );
 
-        $control_ops = array('width' => 500);
-        parent::WP_Widget(false, 'Really Simple Twitter', array(), $control_ops);  
-    }
+    $control_ops = array('width' => 500);
+    parent::WP_Widget(false, 'Really Simple Twitter', array(), $control_ops);  
+  }
 
-    /** @see WP_Widget::widget */
-    function widget($args, $instance) {    
+  /** @see WP_Widget::widget */
+  function widget($args, $instance) {    
     extract( $args );
     $title = apply_filters('widget_title', $instance['title']);
     echo $before_widget;  
@@ -195,10 +195,10 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     }
     echo $this->really_simple_twitter_messages($instance);
     echo $after_widget;
-    }
+  }
 
-    /** @see WP_Widget::update */
-    function update($new_instance, $old_instance) {        
+  /** @see WP_Widget::update */
+  function update($new_instance, $old_instance) {        
     $instance = $old_instance;
     
     foreach ($this->options as $val) {
@@ -208,11 +208,11 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         $instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
       }
     }
-        return $instance;
-    }
+    return $instance;
+  }
 
-    /** @see WP_Widget::form */
-    function form($instance) {
+  /** @see WP_Widget::form */
+  function form($instance) {
     if (empty($instance)) {
       foreach ($this->options as $val) {
         if ($val['type']=='separator') {
@@ -342,7 +342,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     $transient_name = 'twitter_data_'.$options['username'].$options['skip_text'].'_'.$options['num'];
 
     if ($options['erase_cached_data']) {
-      $this->debug($options, 'Fetching erase cached data from Twitter');
+      $this->debug($options, '"Erase cached data" and fetch from Twitter');
       delete_transient($transient_name);
       delete_transient($transient_name.'_status');
       delete_option($transient_name.'_valid');
@@ -366,12 +366,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         return __('Error retrieving tweets','rstw'); 
       }
 
-      if (isset($twitter_data['errors'])) {
-        $this->debug($options, 'Twitter data error: '.$twitter_data['errors'][0]['message']);
-      }
     } else {
   
-      // USE TRANSIENT DATA, TO MINIMIZE REQUESTS TO THE TWITTER FEED
+      // USE TRANSIENT DATA AS LOCAL CACHE, TO MINIMIZE REQUESTS TO THE TWITTER FEED
   
       $timeout       = 10 * 60; // 10m
       $error_timeout =  5 * 60; // 5m
@@ -390,69 +387,72 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         }
       }
     
-      // Tweets
+      // IF THE CACHE IS EMPTY OR CONTAINS ERRORS, RETRIEVE NEW DATA
 
       if (empty($twitter_data) || count($twitter_data)<1 || isset($twitter_data['errors'])) {
-        $calls_limit   = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['limit'];
-        $remaining     = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['remaining'];
-        $reset_seconds = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['reset'] - time();
-
-        $this->debug($options, 'Fetching data from Twitter');
-        $this->debug($options, 'Fetching '.$max_items_to_retrieve.' items, '.$remaining.' of '.$calls_limit.' calls left, reset in '.$reset_seconds.'s');
-
-        if($remaining <= 7 && $reset_seconds > 0) {
+        if (isset($twitter_status['resources'])) {
+          $remaining     = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['remaining'];
+          $calls_limit   = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['limit'];
+          $reset_seconds = (int)$twitter_status['resources']['statuses']['/statuses/user_timeline']['reset'] - time();
+  
+          $this->debug($options, $remaining.' of '.$calls_limit.' API calls left, reset in '.$reset_seconds.'s');
+  
+          if($remaining <= 7 && $reset_seconds > 0) {
             $timeout       = $reset_seconds;
             $error_timeout = $reset_seconds;
+          }
         }
 
+        $this->debug($options, 'Fetching '.$max_items_to_retrieve.' items from Twitter');
         try {
           $twitter_data =  $this->cb->statuses_userTimeline(array(
-              'screen_name'=>$options['username'], 
-              'count'=>$max_items_to_retrieve, 
-              'exclude_replies'=>$options['skip_replies'],
-              'include_rts'=>(!$options['skip_retweets'])
+              'screen_name'     => $options['username'], 
+              'count'           => $max_items_to_retrieve, 
+              'exclude_replies' => $options['skip_replies'],
+              'include_rts'     => (!$options['skip_retweets'])
             ));
         } catch (Exception $e) { return __('Error retrieving tweets','rstw'); }
 
-        if(!isset($twitter_data['errors']) || (count($twitter_data) >= 1) ) {
+        if (!isset($twitter_data['errors']) && count($twitter_data) > 0) {
             set_transient($transient_name, $twitter_data, $timeout);
             update_option($transient_name."_valid", $twitter_data);
         } else {
-          set_transient($transient_name, $twitter_data, $error_timeout);  // Wait 5 minutes before trying again
-          if (isset($twitter_data['errors'])) {
-            $this->debug($options, 'Twitter data error: '.$twitter_data['errors'][0]['message']);
-            $this->debug($options, 'Wait 5 minutes before trying again');
-          }
+          set_transient($transient_name, array(), $error_timeout);
+          $this->debug($options, 'Invalid data: wait 5 minutes before trying again');
         }
       } else {
         $this->debug($options, 'Using cached Twitter data');
       }
-    
-      if (isset($twitter_data['errors'])) {
-        // STORE ERROR FOR DISPLAY
-        $error_code    = (isset($twitter_data['errors'][0]['code']   )) ? $twitter_data['errors'][0]['code']    : '';
-        $error_message = (isset($twitter_data['errors'][0]['message'])) ? $twitter_data['errors'][0]['message'] : '';
-        if ($error_code != '' || $error_message != '') {
-          $this->debug($options, 'Twitter error ['.$error_code.'] '.$error_message);
-        } else {
-          $this->debug($options, 'Twitter error: '.print_r($twitter_data['errors'], true));
-        }
-        if ($error_code == '32') {
-          $this->debug($options, 'Twitter API authentication error: try to regenerate your API access token');
-        }
+    }
+
+    if (isset($twitter_data['errors'])) {
+      // STORE ERROR FOR DISPLAY
+      $error_code    = (isset($twitter_data['errors'][0]['code']   )) ? $twitter_data['errors'][0]['code']    : '';
+      $error_message = (isset($twitter_data['errors'][0]['message'])) ? $twitter_data['errors'][0]['message'] : '';
+      if ($error_code != '' || $error_message != '') {
+        $this->debug($options, 'Twitter API error ['.$error_code.'] '.$error_message);
+      } else {
+        $this->debug($options, 'Twitter API error: '.print_r($twitter_data['errors'], true));
+      }
+      if ($error_code == '32') {
+        $this->debug($options, 'Twitter API authentication error: try to regenerate your API access token');
+      } else if ($error_code == '135') {
+        $this->debug($options, 'Server Timestamp error: ensure that your system clock is accurate and not running behind or ahead');
+      } else {
         $this->debug($options, 'Twitter username: '.$options['username']);
       }
-      
-      if (empty($twitter_data) || isset($twitter_data['errors'])) {
-        $this->debug($options, 'Twitter data is empty, retrieving Safe Cache');
-        $twitter_data = get_option($transient_name."_valid");
-        if (empty($twitter_data)) {
-          $this->debug($options, 'Safe Cache is also empty');
-        }
+    }
+    
+    // IF DATE IS EMPTY OR THERE IS AN ERROR, TRY TO RETRIEVE THE SAFE CACHE
+    if (!$options['erase_cached_data'] && (empty($twitter_data) || isset($twitter_data['errors']))) {
+      $this->debug($options, 'Twitter data is empty, retrieving Safe Cache');
+      $twitter_data = get_option($transient_name."_valid");
+      if (!is_array($twitter_data) || empty($twitter_data) || count($twitter_data) == 0) {
+        $this->debug($options, 'Safe Cache is also empty');
       }
     }
 
-    if (!is_array($twitter_data) || empty($twitter_data) || count($twitter_data)<1) {
+    if (!is_array($twitter_data) || empty($twitter_data) || count($twitter_data) == 0) {
         return __('Unable to get tweets','rstw');
     }
     $link_target = ($options['link_target_blank']) ? ' target="_blank" ' : '';
@@ -462,7 +462,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
 
     $i = 0;
     foreach($twitter_data as $message) {
-      if (!is_array($message)) {
+      if (!is_array($message) || !isset($message['text'])) {
         continue;
       }
 
