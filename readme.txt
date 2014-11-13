@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.0
-Stable tag: 2.5.10
+Stable tag: 2.5.11
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -183,6 +183,10 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.11 =
+* Added: Basic CSS style rules for thumbnails
+* Changed: Alt and Title attributes added to every image
 
 = 2.5.10 =
 * Changed: Improved Debug info 

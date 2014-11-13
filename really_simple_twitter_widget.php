@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.10
+Version: 2.5.11
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -497,7 +497,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
       
       // TODO: LINK
       if ($options['thumbnail'] && $message['user']['profile_image_url_https']!='') {
-        $out .= '<img src="'.$message['user']['profile_image_url_https'].'" />';
+        $out .= '<img src="'.$message['user']['profile_image_url_https'].'" alt="'.htmlspecialchars($message['user']['name']).'" title="'.htmlspecialchars($message['user']['name']).'" />';
       }
       if ($options['hyperlinks']) {
         if ($options['replace_link_text']!='') {
@@ -554,6 +554,14 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         <a href="https://twitter.com/' . $options['username'] . '" class="twitter-follow-button" data-show-count="false">Follow @'.$options['username'].'</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?"http":"https";if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document, "script", "twitter-wjs");</script>';
       $out .= apply_filters( 'rstw_button_follow', $original_button_follow, $options );
+    }
+    // BASIC STYLE FOR THUMBNAILS
+    if ($options['thumbnail']) {
+      $out .= '
+        <style>
+        .really_simple_twitter_widget img { float: left; margin-top: 5px; margin-right: 5px; }
+        .really_simple_twitter_widget li  { clear: both; }
+        </style>';
     }
     return apply_filters( 'rstw_output', $out, $options );
   }
