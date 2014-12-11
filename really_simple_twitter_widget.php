@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: WhileTrue
-Version: 2.5.12
+Version: 2.5.13
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -206,9 +206,9 @@ class ReallySimpleTwitterWidget extends WP_Widget {
         continue;
       }
       if ($val['type']=='text' || $val['type']=='password') {
-        $instance[$val['name']] = strip_tags($new_instance[$val['name']]);
+        $instance[$val['name']] = (isset($new_instance[$val['name']])) ? strip_tags($new_instance[$val['name']]) : '';
       } else if ($val['type']=='checkbox') {
-        $instance[$val['name']] = ($new_instance[$val['name']]=='on') ? true : false;
+        $instance[$val['name']] = (isset($new_instance[$val['name']]) && $new_instance[$val['name']]=='on') ? true : false;
       }
     }
     return $instance;
