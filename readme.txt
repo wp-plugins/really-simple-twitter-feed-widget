@@ -3,8 +3,8 @@ Contributors: whiletrue
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
-Tested up to: 4.0
-Stable tag: 2.5.13
+Tested up to: 4.1
+Stable tag: 2.5.14
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -46,7 +46,7 @@ For more informations: [www.whiletrue.it](http://www.whiletrue.it/really-simple-
 
 Do you like this plugin? Give a chance to our other works:
 
-* [Really Simple Facebook Twitter Share Buttons](http://www.whiletrue.it/really-simple-facebook-twitter-share-buttons-for-wordpress/ "Really Simple Facebook Twitter Share Buttons")
+* [Really Simple Share](http://www.whiletrue.it/really-simple-share-wordpress-plugin/ "Really Simple Share")
 * [Most and Least Read Posts](http://www.whiletrue.it/most-and-least-read-posts-widget-for-wordpress/ "Most and Least Read Posts")
 * [Tilted Tag Cloud Widget](http://www.whiletrue.it/tilted-tag-cloud-widget-per-wordpress/ "Tilted Tag Cloud Widget")
 * [Reading Time](http://www.whiletrue.it/reading-time-for-wordpress/ "Reading Time")
@@ -183,6 +183,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.14 =
+* Plugin tested up WordPress 4.1
 
 = 2.5.13 =
 * Fixed: PHP notices on widget instance creation and update
