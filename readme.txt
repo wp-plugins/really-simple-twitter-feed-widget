@@ -4,7 +4,7 @@ Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
 Tested up to: 4.1
-Stable tag: 2.5.14
+Stable tag: 2.5.15
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -66,8 +66,9 @@ Starting from the 2.0 release, the Codebird library by J.M. ( me@mynetx.net - ht
 * Branco, Slovak translation (WebHostingGeeks.com)
 * WhileTrue, Italian translation (www.whiletrue.it)
 * Inspirats, French translation (rysk-x.com)
-* Aleksandra Czuba, Polish translation (www.iwasindira.com)
+* Aleksandra Czuba, Polish translation (www.olaczuba.com)
 * Alexandre Janini, Brazilian Portuguese translation (www.asterisko.com.br)
+* Andrew Kurtis, Spanish translation (www.webhostinghub.com)
 
 
 == Installation ==
@@ -183,6 +184,9 @@ This is the complete option list. The boolean options can be set writing "true" 
 2. Options available in the Settings menu 
 
 == Changelog ==
+
+= 2.5.15 =
+* Added: Spanish translation by Andrew Kurtis (www.webhostinghub.com)
 
 = 2.5.14 =
 * Plugin tested up WordPress 4.1
