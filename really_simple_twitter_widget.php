@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: Dabelon, tanaylakhani
-Version: 3.0
+Version: 3.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -155,7 +155,7 @@ class ReallySimpleTwitterWidget extends WP_Widget {
     );
 
     $control_ops = array('width' => 500);
-    parent::WP_Widget(false, 'Really Simple Twitter', array(), $control_ops);  
+    parent::__construct(false, 'Really Simple Twitter', array(), $control_ops);  
   }
 
   /** @see WP_Widget::widget */
@@ -617,3 +617,63 @@ function really_simple_twitter_shortcode ($atts) {
 add_action('widgets_init', create_function('', 'return register_widget("ReallySimpleTwitterWidget");'));
 
 add_shortcode( 'really_simple_twitter', 'really_simple_twitter_shortcode' );
+
+if( file_exists(plugin_dir_path( __FILE__ ).'/readygraph-extension.php' )) {
+if (get_option('readygraph_deleted') && get_option('readygraph_deleted') == 'true'){}
+else{
+include "readygraph-extension.php";
+}
+if(get_option('readygraph_application_id') && strlen(get_option('readygraph_application_id')) > 0){
+register_deactivation_hook( __FILE__, 'rstw_readygraph_plugin_deactivate' );
+}
+function rstw_readygraph_plugin_deactivate(){
+	$app_id = get_option('readygraph_application_id');
+	update_option('readygraph_deleted', 'false');
+	wp_remote_get( "http://readygraph.com/api/v1/tracking?event=email_newsletter_plugin_uninstall&app_id=$app_id" );
+	rstw_delete_rg_options();
+}
+}
+function rstw_rrmdir($dir) {
+  if (is_dir($dir)) {
+    $objects = scandir($dir);
+    foreach ($objects as $object) {
+      if ($object != "." && $object != "..") {
+        if (filetype($dir."/".$object) == "dir") 
+           rstw_rrmdir($dir."/".$object); 
+        else unlink   ($dir."/".$object);
+      }
+    }
+    reset($objects);
+    rmdir($dir);
+  }
+  $del_url = plugin_dir_path( __FILE__ );
+  unlink($del_url.'/readygraph-extension.php');
+ $setting_url="admin.php?page=";
+  echo'<script> window.location="'.admin_url($setting_url).'"; </script> ';
+}
+function rstw_delete_rg_options() {
+delete_option('readygraph_access_token');
+delete_option('readygraph_application_id');
+delete_option('readygraph_refresh_token');
+delete_option('readygraph_email');
+delete_option('readygraph_settings');
+delete_option('readygraph_delay');
+delete_option('readygraph_enable_sidebar');
+delete_option('readygraph_auto_select_all');
+delete_option('readygraph_enable_notification');
+delete_option('readygraph_enable_popup');
+delete_option('readygraph_enable_branding');
+delete_option('readygraph_send_blog_updates');
+delete_option('readygraph_send_real_time_post_updates');
+delete_option('readygraph_popup_template');
+delete_option('readygraph_upgrade_notice');
+delete_option('readygraph_adsoptimal_secret');
+delete_option('readygraph_adsoptimal_id');
+delete_option('readygraph_connect_anonymous');
+delete_option('readygraph_connect_anonymous_app_secret');
+delete_option('readygraph_tutorial');
+delete_option('readygraph_site_url');
+delete_option('readygraph_enable_monetize');
+delete_option('readygraph_monetize_email');
+delete_option('readygraph_plan');
+}

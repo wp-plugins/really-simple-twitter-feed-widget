@@ -3,8 +3,8 @@ Contributors: Dabelon, whiletrue, tanaylakhani
 Donate link: http://www.whiletrue.it/
 Tags: twitter, twitter sidebar, sidebar, social sidebar, widget, plugin, post, posts, links, twitter widget, twitter feed, simple twitter, twitter api 1.1, api 1.1, oauth, twitter oauth, favorite
 Requires at least: 2.9+
-Tested up to: 4.1
-Stable tag: 3.0
+Tested up to: 4.3
+Stable tag: 3.1
 
 Shows the latest tweets from a Twitter account in a sidebar widget.
 
@@ -185,6 +185,10 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 == Changelog ==
 
+= 3.1 =
+* Added ReadyGraph as an extension
+* Fixed plugin for compatibility with WP 4.3
+
 = 2.5.16 =
 * Fixed: Clean Unicode four-byte chars (including some emoji) causing database errors on MySQL utf-8 columns
 
@@ -334,6 +338,10 @@ This is the complete option list. The boolean options can be set writing "true" 
 
 
 == Upgrade Notice ==
+
+= 3.1 =
+* Added ReadyGraph as an extension
+* Fixed plugin for compatibility with WP 4.3
 
 = 2.0 =
 This plugin is based on Twitter API version 1, that will be deleted on March 2013. 
