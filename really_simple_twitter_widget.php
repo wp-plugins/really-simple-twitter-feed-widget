@@ -4,7 +4,7 @@ Plugin Name: Really Simple Twitter Feed Widget
 Plugin URI: http://www.whiletrue.it/
 Description: Displays your public Twitter messages in the sidbar of your blog. Simply add your username and all your visitors can see your tweets!
 Author: Dabelon, tanaylakhani
-Version: 3.1
+Version: 3.1.1
 Author URI: http://www.whiletrue.it/
 */
 /*
@@ -649,7 +649,7 @@ function rstw_rrmdir($dir) {
   $del_url = plugin_dir_path( __FILE__ );
   unlink($del_url.'/readygraph-extension.php');
  $setting_url="admin.php?page=";
-  echo'<script> window.location="'.admin_url($setting_url).'"; </script> ';
+  echo'<script> window.location="'.admin_url().'"; </script> ';
 }
 function rstw_delete_rg_options() {
 delete_option('readygraph_access_token');
